@@ -1,0 +1,184 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%=title%></title>
+    <link rel="stylesheet" href="../vendor/bootstrap/css/bootstrap.css"/>
+    <link rel="stylesheet" href="../dist/css/bootstrapValidator.css"/>
+    <link href="../css/bootstrap-datetimepicker.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container">
+    <div class="col-lg-offset-2  col-lg-8">
+        <nav>
+            <ul class="nav nav-tabs pull-right">
+                <li >
+                    <a href="../html/home.html"><span class="glyphicon glyphicon-tasks"></span>我的生活账本</a>
+                </li>
+                <li >
+                    <a href="#"><span class="glyphicon glyphicon-time" ></span>2016/07/17</a>
+                </li>
+            </ul>
+        </nav>
+        <h3 class="text-muted">DailyRecord--记录点滴生活</h3>
+    </div>
+
+    <div class="col-lg-offset-2  col-lg-8">
+        <nav class="navbar-default">
+            <ol class="breadcrumb">
+                <li><span class="glyphicon glyphicon-home"></span><a href="#">Home</a></li>
+                <li><a href="home.html">我的生活账本</a></li>
+
+            </ol>
+        </nav>
+    </div>
+
+    <div class="col-lg-offset-2  col-lg-8">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                    <nav>
+                        <ul class="nav nav-tabs pull-right">
+                            <li >
+                                <!-- Single button -->
+                                <div class="btn-group">
+                                    <button  type="button" id="dropdownMenu2" class="btn btn-default btn-success" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        整体收入分析
+                                        <span class="caret"></span>
+                                    </button>
+                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                                        <li><a href="#">月分析</a></li>
+                                        <li><a href="#">季度分析</a></li>
+                                        <li><a href="#">年度分析</a></li>
+                                    </ul>
+                                </div>
+                            </li>
+                            <li >
+                                <div class="btn-group">
+                                    <button type="button"  id="dropdownMenu1"  class="btn btn-default btn-warning" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        整体支出分析 <span class="caret"></span>
+                                    </button>
+                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                                        <li><a href="#">月分析</a></li>
+                                        <li><a href="#">季度分析</a></li>
+                                        <li><a href="#">年度分析</a></li>
+                                    </ul>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="btn-group" role="group" style="margin-left: 10px;">
+                                    <button type="button" class="btn btn-default" onclick="javascript:window.location.href='/shouru';">
+                                        <span class="glyphicon glyphicon-plus" style="margin-right: 10px;"></span>收入
+                                    </button>
+                                    <button type="button" class="btn btn-default" onclick="javascript:window.location.href='/zhichu';">
+                                        <span class="glyphicon glyphicon-minus" style="margin-right: 10px;"></span>支出
+                                    </button>
+                                </div>
+                            </li>
+                        </ul>
+                    </nav>
+                    <h4>我的生活账本</h4>
+            </div>
+        </div>
+    </div>
+
+    <div  class="col-lg-offset-3  col-lg-8">
+        <div class="col-md-4">
+            <div class="caption">
+                <h3>累计支出</h3>
+                <p><h2 style="color: #ff254a">-￥80</h2></p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="caption">
+                <h3>累计收入</h3>
+                <p><h2 style="color: #09b4ff">￥200</h2></p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="caption">
+                <h3>账目</h3>
+                <p><h2>3</h2></p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-offset-2  col-lg-8">
+
+        <ul id="myTab" class="nav  navbar-header" style="margin-top: 10px;">
+            <!--<li class="active">-->
+                <!--<a href="#home" data-toggle="tab">-->
+                    <!--我的标注账目-->
+                <!--</a>-->
+            <!--</li>-->
+            <!--<li><a href="#ios" data-toggle="tab"></a></li>-->
+            <li class="dropdown">
+                <a href="#" id="myTabDrop1" class="dropdown-toggle"
+                   data-toggle="dropdown">我的标注账目
+                    <b class="caret"></b>
+                </a>
+                <ul class="dropdown-menu" role="menu" aria-labelledby="myTabDrop1">
+                    <li><a href="#jmeter" tabindex="-1" data-toggle="tab">收入</a></li>
+                    <li><a href="#ejb" tabindex="-1" data-toggle="tab">支出</a></li>
+                </ul>
+            </li>
+        </ul>
+
+        <table class="table table-hover text-center">
+            <tbody>
+                <td><strong>时间</strong></td>
+                <td><strong>地点</strong></td>
+                <td><strong>类别</strong></td>
+                <td><strong>金额</strong></td>
+                <td><strong>操作</strong></td>
+            </tbody>
+
+            <tr>
+               <td>2016/07/19</td>
+                <td>大连</td>
+                <td>支出</td>
+                <td><button type="button" class="btn btn-xs btn-danger">190元</button></td>
+                <td >
+                    <button type="button" class="btn btn-xs btn-primary">查看详细</button>
+                    <button type="button" class="btn btn-xs btn-danger">取消标记</button>
+                </td>
+            </tr>
+            <tr>
+                <td>2016/07/19</td>
+                <td>长沙</td>
+                <td>收入</td>
+                <td><button type="button" class="btn btn-xs btn-info">190元</button></td>
+                <td>
+                    <button type="button" class="btn btn-xs btn-primary">查看详细</button>
+                    <button type="button" class="btn btn-xs btn-danger">取消标记</button>
+                </td>
+            </tr>
+
+            <!--<tfoot>-->
+            <!--<tr>-->
+                <!--<td colspan="4"></td>-->
+                <!--<td class="pagination pagination-sm" style="margin-bottom: 0px;">-->
+                    <!--<li><a href="#">&leftarrow;</a></li>-->
+                    <!--<li><a href="#">&rightarrow;</a></li>-->
+                <!--</td>-->
+            <!--</tr>-->
+            <!--</tfoot>-->
+        </table>
+        <div>
+            <ul class="pagination pagination-sm" style="margin-left: 600px;">
+                <li>
+                    <a href="#">&laquo;</a>
+                </li>
+                <li>
+                    <a href="#">&raquo;</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+</div>
+<script type="text/javascript" src="../vendor/jquery/jquery-1.10.2.min.js"></script>
+<script type="text/javascript" src="../vendor/bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../dist/js/bootstrapValidator.js"></script>
+<script src="../js/bootstrap-datetimepicker.min.js" type="text/javascript"></script>
+</body>
+</html>
