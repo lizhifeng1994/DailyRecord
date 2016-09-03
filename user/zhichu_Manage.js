@@ -17,7 +17,7 @@ module.exports.show= function(req,res){
                 today_money = parseFloat(today_money)+parseFloat(result[i].HF_MONEY);
             }
             today_money = today_money.toFixed(2);
-            res.render('dy_zhichu',{title:"我的生活账本-支出", data:result,today_money:today_money,today_date:today_date});
+            res.render('dy_zhichu',{ data:result,today_money:today_money,today_date:today_date});
         }
     );
 
