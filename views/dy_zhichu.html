@@ -34,7 +34,6 @@
                     </div>
                     <div class="modal-body">
                         <!-- 具体明细内容-->
-                        <p hidden id="modal_id"></p>
                         <p><strong>花费地点：</strong><span id="hfaddress"></span></p>
                         <p><strong>消费：</strong><span  id="hfcontent"></span></p>
                         <p><strong>消费金额：</strong><span id="hfmoney"></span></p>
@@ -42,7 +41,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-                        <button type="button" class="btn btn-danger" onclick="del()">确认删除</button>
+                        <button type="button" class="btn btn-danger" id="del">确认删除</button>
                     </div>
                 </div>
             </div>
@@ -52,7 +51,7 @@
             <nav>
                 <ul class="nav nav-tabs pull-right">
                     <li >
-                        <a href="home.html"><span class="glyphicon glyphicon-tasks"></span>我的生活账本</a>
+                        <a href="/home"><span class="glyphicon glyphicon-tasks"></span>我的生活账本</a>
                     </li>
                     <li >
                         <a id="today_date"><span class="glyphicon glyphicon-time" ></span><%=today_date%></a>
@@ -66,8 +65,8 @@
         <div class="col-lg-offset-2  col-lg-8">
             <nav class="navbar-default">
                 <ol class="breadcrumb">
-                    <li><span class="glyphicon glyphicon-home"></span><a href="#">Home</a></li>
-                    <li><a href="home.html">我的生活账本</a></li>
+                    <li><span class="glyphicon glyphicon-home"></span><a>Home</a></li>
+                    <li><a href="/home">我的生活账本</a></li>
                     <li class="active">支出</li>
                 </ol>
             </nav>
@@ -140,8 +139,9 @@
                             <input type="checkbox" class="checkbox-inline" value="1" name="hfstar">
                             <span class="label label-danger">标注此账目</span>
                         </label>
-                        <button type="button" onclick="validateSubmit(this.form)" style="margin-left: 50px" id="validateBtn" class="btn btn-primary">保存</button>
-                        <span class="label label-danger col-lg-offset-2">*为必填项</span>
+                        <button type="button" onclick="validateSubmit()" style="margin-left: 20px" id="validateBtn" class="btn btn-primary">保存</button>
+                        <button type="button" onclick="clean()" style="margin-left: 10px" class="btn btn-primary">撤销</button>
+                        <span class="label label-danger col-lg-offset-1">*为必填项</span>
                     </div>
                 </div>
             </form>
@@ -152,8 +152,8 @@
             <div class="panel panel-primary">
                 <div class="panel-heading">
                     <span style="margin-left: 10px;" id="show_hf_date">今日消费</span>
-
                     <strong class="pull-right" id="total_money">总计：<%=today_money%>元</strong>
+                    <p hidden id="pageNow"><%=pageNow%></p>
                 </div>
                 <div class="panel-body list-group" id="today_hf">
 
@@ -161,10 +161,10 @@
                     <% if(data.length) {
                     data.forEach(function(detail){ %>
                     <li class="list-group-item" style="overflow:hidden;" id=<%=detail.HF_ID%> >
-                       <%=detail.HF_CONTENT%>
+                       <b><%=detail.HF_CONTENT%></b>
                             <span class="label label-danger pull-right">-<%=detail.HF_MONEY%>元</span>
                         <div class="dask">
-                            <button  class="btn btn-primary" style="margin-left: 20px;">编辑</button>
+                            <button  class="btn btn-primary" onclick="fillForm('<%=detail.HF_ID%>')" style="margin-left: 20px;">编辑</button>
                             <button class="btn btn btn-warning" onclick="showDetail('<%=detail.HF_ID%>')">删除</button>
                         </div>
                     </li>
@@ -174,17 +174,10 @@
                     <span class="list-group-item" id="no_hf">今日还未有消费内容</span>
                     <%
                     }  %>
-                    <!--<a href="#" class="list-group-item">早餐<span class="label label-danger pull-right">-12元</span></a>-->
-                    <!--<a href="#" class="list-group-item">中餐<span class="label label-danger pull-right">-18元</span></a>-->
-                    <!--<a href="#" class="list-group-item">JS程序设计<span class="label label-danger pull-right">-62.4元</span></a>-->
-                    <!--<a href="#" class="list-group-item">厨房用品+零食<span class="label label-danger pull-right">-40.4元</span></a>-->
-                    <!--<a href="#" class="list-group-item">怡宝矿泉水<span class="label label-danger pull-right">-7元</span></a>-->
-                    <!--<a href="#" class="list-group-item">话费<span class="label label-danger pull-right">-7元</span></a>-->
-
                     <div class="pull-right">
                         <ul class="pagination pagination-sm" style="margin-bottom: 0px;">
-                            <li><a href="#">&uparrow;</a></li>
-                            <li><a href="#">&downarrow;</a></li>
+                            <li><a onclick="pageUp()">&uparrow;</a></li>
+                            <li><a onclick="pageDown()">&downarrow;</a></li>
                         </ul>
                     </div>
                 </div>
@@ -197,10 +190,10 @@
     <script type="text/javascript" src="../dist/js/bootstrapValidator.js"></script>
     <script src="../js/bootstrap-datetimepicker.min.js" type="text/javascript"></script>
     <script type="text/javascript" src="../js/angular.min.js"></script>
-
+    <script type="text/javascript" src="../js/comm.js"></script>
     <script type="text/javascript">
 
-        //删除时查看消费具体明细
+//      删除时查看消费具体明细
         function showDetail(HF_ID){
             $.ajax({
                 type:'POST',
@@ -214,21 +207,25 @@
                         $("#hfmoney").empty();
                         $("#hfmark").empty();
                         $("#modal_id").empty();
+
                         $("#modal_id").append(data[0].HF_ID);
                         $("#hfaddress").append(data[0].HF_ADDRESS);
                         $("#hfcontent").append(data[0].HF_CONTENT);
                         $("#hfmoney").append(data[0].HF_MONEY);
                         $("#hfmark").append(data[0].HF_MARK);
                         $('#myModal').modal('show');
+                        $("#del").attr("onclick","del("+HF_ID+")");
+//                        $("#del").click(function(event){
+//                            event.preventDefault();
+//                            $("#del").onclick = del(HF_ID);
+//                        });
                     }
                 }
             });
         }
 
 //        删除
-//        today_hf
-        function del(){
-            var HF_ID = $("#modal_id").text();
+        function del(HF_ID){
             var HF_DEL = "#"+HF_ID;
             var HF_MONEY = $("#hfmoney").text();
             var total_money = $("#total_money").text().replace(/[^\d.]/g,'');
@@ -242,25 +239,145 @@
                         $('#myModal').modal('hide');
                         setTimeout( $(HF_DEL).remove(),1000);
                         if($("#today_hf").find("li").length==2){
-                            var $sapn = $('<span>',{
-                                text:'今日还未有消费内容',
-                                class:'list-group-item',
-                                id:'no_hf'
-                            });
+                            if(parseInt($("#pageNow").text())!=1){
+                                pageUp();
+                            }else{
+                                var $sapn = $('<span>',{
+                                    text:'今日还未有消费内容',
+                                    class:'list-group-item',
+                                    id:'no_hf'
+                                });
 
-                            $("#today_hf").prepend($sapn);
+                                $("#today_hf").prepend($sapn);
+                            }
+
                         }
+//                      如果有5条记录，你删除的时候再去找
+                        if(($("#today_hf").find("li").length-2)==4){
+                            isNext($("#today_hf").find("li")[3].getAttribute("id"));
+                        }
+
                         total_money = parseFloat(total_money)-parseFloat(HF_MONEY);
                         total_money = total_money.toFixed(2);
-                        $("#total_money").text(total_money+'元');
+                        $("#total_money").text("总计："+total_money+'元');
                     }
                 }
             });
 
         }
 
+//      编辑
+        function update(HF_ID,HF_MONEY) {
+            var zcForm = serializeForm();
 
-        //        鼠标悬停触发事件
+            $('#zhichuForm').bootstrapValidator('validate');
+            if ($('#zhichuForm').data('bootstrapValidator').isValid()) {
+                if ((document.getElementById(HF_ID) != null)) {
+//                进行更新
+                    if (isSampleDay()) {
+//                   update
+                        console.log("进来编辑")
+                        $.ajax({
+                            type: 'POST',
+                            url: "/zhichu/update",
+                            data: {zcForm: zcForm, HF_ID: HF_ID},
+                            dataType: 'json',
+                            success: function (data) {
+                                if (data) {
+//                               console.log("编辑成功"+data[0].HF_ID);
+                                console.log("数据库"+data.HF_MONEY);
+                                console.log("传过来的"+HF_MONEY);
+
+                                    var diff = parseFloat(data.HF_MONEY) - parseFloat(HF_MONEY);
+
+                                    var total_money = $("#total_money").text();
+
+                                    total_money = parseFloat(total_money.substring(3, total_money.length));
+
+                                    total_money = total_money + diff;
+
+                                    total_money = total_money.toFixed(2);
+
+                                    var temp_HF_ID = "#" + HF_ID;
+
+                                    $(temp_HF_ID).find("span").text("-" + data.HF_MONEY + "元");
+
+                                    $(temp_HF_ID).find("b").text(data.HF_CONTENT);
+
+                                    $("#total_money").text("总计：" + total_money + '元');
+
+                                    clean();
+                                }
+                            }
+                        });
+                    } else {
+//                   如果你修改了日期
+                        var date = now_date();
+                        del(HF_ID);
+                        addNotToday(zcForm, 0, date);
+
+                        $("#validateBtn").attr("onclick",validateSubmit());
+
+                        $("#validateBtn").text("保存");
+                    }
+                } else {
+//                console.log("不存在");
+//                进行新增
+                    validateSubmit();
+//                    $("#validateBtn").click(function (event) {
+//                        event.preventDefault();
+//                        $("#validateBtn").onclick = validateSubmit();
+//                    });
+
+                    $("#validateBtn").attr("onclick",validateSubmit());
+
+                    $("#validateBtn").text("保存");
+                }
+
+            }
+        }
+
+//       点击编辑，获得内容，填充表单
+        function fillForm(HF_ID){
+//            console.log(document.getElementsByName("hfmoney"));
+            $.ajax({
+                type:'POST',
+                url:"/zhichu/detail",
+                data:{HF_ID:HF_ID},
+                dataType:'json',
+                success:function(data){
+                    if(data){
+                        $("input[name='hfmoney']").val(data[0].HF_MONEY);
+
+                        $("select[name='hfkind']").val(data[0].HF_KIND);
+
+                        $("input[name='hfcontent']").val(data[0].HF_CONTENT);
+
+                        $("textarea[name='hfmark']").val(data[0].HF_MARK);
+
+                        $("input[name='hfplace']").val(data[0].HF_ADDRESS);
+
+                        $("input[name='date']").val(data[0].HF_DATE);
+
+                        if(data[0].HF_STAR==1){
+                            console.log(data[0].HF_STAR);
+                            $("input[name='hfstar']").prop("checked",true);
+                        }
+
+                        $("#validateBtn").removeAttr("onclick");
+
+                        $("#validateBtn").attr("onclick","update("+HF_ID+","+data[0].HF_MONEY+")");
+
+                        $("#validateBtn").text("编辑");
+
+//                        $("#validateBtn").attr("onclick","update(HF_ID)");
+//                        console.log($("#validateBtn"));
+                    }
+                }
+            });
+        }
+
+//        鼠标悬停触发事件
         $(".list-group-item").hover(
                 function () {
                     $(this).find(".dask").stop().delay(50).animate({"top":0,opacity:0.5},300)
@@ -273,7 +390,7 @@
 
 //       日期插件的属性设置
         $('.form_datetime').datetimepicker({
-            language:  'en',
+//            language:  'en',
             weekStart: 1,
             todayBtn:  1,
             autoclose: 1,
@@ -284,6 +401,7 @@
 //            endDate:new Date(),//只能选择今天之前的日期
             minView: 2//不弹出小时，只能选择到天
         });
+
 //      表单验证
         $(document).ready(function() {
             $('#zhichuForm').bootstrapValidator({
@@ -313,15 +431,19 @@
                             notEmpty: {
                                 message: '请选择消费金额'
                             },
-                            numbers: {
-                                message: '请输入数字'
-                            }
+                            regexp: {
+                                regexp: /^\+?(:?(:?\d+\.\d+)|(:?\d+))$/,
+                                message: '请填写正确的数字格式'
+                            },
                         }
                     },
                     hfplace:{
                         validators: {}
                     },
                     date:{
+                        validators: {}
+                    },
+                    hfstar:{
                         validators: {}
                     },
                     hfmark:{
@@ -333,20 +455,20 @@
                         }
 
                     }
-
-
                 }
             });
         });
 
-        function validateSubmit(form) {
+//      增加
+        function validateSubmit() {
             var date = now_date();
-            $('#zhichuForm').bootstrapValidator('validate');
+           $('#zhichuForm').bootstrapValidator('validate');
+
             if ($('#zhichuForm').data('bootstrapValidator').isValid()) {
                 var total_money = $("#total_money").text().replace(/[^\d.]/g,'');
-                var data = {};
-                $("#zhichuForm").serializeArray().map(function(x){data[x.name] = x.value;});
-                var zcForm = data;
+//                var data = {};
+//                $("#zhichuForm").serializeArray().map(function(x){data[x.name] = x.value;});
+                var zcForm = serializeForm();
                 //如果不是添加当前的项目，则要对获取的日期进行判断
                 if(isSampleDay()){
                     addToday(zcForm,1);
@@ -354,7 +476,6 @@
                 else{
                     addNotToday(zcForm,0,date);
                 }
-
             }
     }
 
@@ -377,7 +498,7 @@
                     }
 //                  保留小数点后两位
                     total_money = total_money.toFixed(2);
-                    $("#total_money").text(total_money+'元');
+                    $("#total_money").text("总计:"+total_money+'元');
                     $("#show_hf_date").text(date);
 
                 }
@@ -399,103 +520,104 @@
                     $('#zhichuForm').bootstrapValidator("resetForm",true);
                     $('#no_hf').remove();
 //                        调用方法，插入
-                    appendDiv(data);
+                    if(($("#today_hf").find("li").length-2)==5){
+                        $("#today_hf").find("li")[4].remove();
+                        appendDiv(data);
+                    }else{
+                        appendDiv(data);
+                    }
+
 //                       修改今日消费的money
                     total_money = parseFloat(total_money)+parseFloat(data.HF_MONEY);
-                    $("#total_money").text(total_money+'元');
+                    total_money = total_money.toFixed(2);
+                    $("#total_money").text("总计："+total_money+'元');
                 }
             }
         });
     }
 
-//  把一些DOM操作封装
-    function appendDiv(data){
-        var $li = $('<li>',{
-            class:'list-group-item',
-            style:'overflow:hidden',
-            text:data.HF_CONTENT,
-            id:data.HF_ID
-        });
-//            var $li =  $('<li class="list-group-item" id="li_detail" style=" overflow:hidden;">');
-        var $span = $('<span>',{
-            class:'label label-danger pull-right',
-            text:'-'+data.HF_MONEY+'元'
-        });
+//  下一页
+    function pageDown(){
+//      如果本页面有5条记录，这个就是最后一条记录
+//        console.log($("#today_hf").find("li")[4]);
+//      如果当前消费记录数小于5条，就不需要去请求下一页
+//      如果当前页面满了，才下一页
 
-
-        var $div = $('<div>',{
-            class:"dask"
-        });
-
-        var $update = $('<button>',{
-            class:'btn btn-primary',
-            style:'margin-left: 20px;',
-            text:'编辑'
-        });
-
-
-        var $del = $('<button>',{
-            class:'btn btn btn-warning',
-            style:'margin-left: 5px;',
-            text:'删除'
-        });
-        $del.click(function(event){
-            event.preventDefault();
-            $del.onclick = showDetail(data.HF_ID);
-        });
-        $div.append($update);
-        $div.append($del);
-        $li.append($span);
-        $li.append($div);
-
-        $li.hover(
-                function () {
-                    $(this).find(".dask").stop().delay(50).animate({"top":0,opacity:0.5},300)
-                },
-                function () {
-                    $(this).find(".dask").stop().animate({"top":-200,opacity:0},300)
+        var date = $("#show_hf_date").text().toString();
+        console.log(date);
+        if(($("#today_hf").find("li").length-2)==5){
+            var pageNow = parseInt($("#pageNow").text())+1;
+            $.ajax({
+                type:'POST',
+                url:"/zhichu/page",
+                data:{pageNow:pageNow,date:date},
+                dataType:'json',
+                success:function(data) {
+                    if (data.length != 0) {
+                        $("#today_hf").children(".list-group-item").remove();
+                        for (i = data.length-1; i >=0; i--) {
+                            appendDiv(data[i]);
+                        }
+//                    console.log(pageNow);
+//                    设置新的当前页
+                        $("#pageNow").text(pageNow);
+//                        console.log("当前页" + $("#pageNow").text());
+                    }
                 }
-        );
-        $("#today_hf").prepend($li);
+            });
+
+        }
+
     }
 
+//  上一页
+    function pageUp(){
+        var pageNow = $("#pageNow").text();
+        var date = $("#show_hf_date").text().toString();
+//      如果当前页就是第一页，就不需要去请求上一页
+        if(parseInt(pageNow)>1){
+            var pageNow = parseInt($("#pageNow").text())-1;
+            $.ajax({
+                type:'POST',
+                url:"/zhichu/page",
+                data:{pageNow:pageNow,date:date},
+                dataType:'json',
+                success:function(data) {
+                    if (data.length != 0) {
+                        $("#today_hf").children(".list-group-item").remove();
+                        for (i = (data.length-1); i >=0 ; i--) {
+                            appendDiv(data[i]);
+                        }
+//                    console.log(pageNow);
+//                    设置新的当前页
+                        $("#pageNow").text(pageNow);
+                        console.log("当前页" + $("#pageNow").text());
 
-//  判断添加的是否和左侧列表栏的日期相符合（没有数据默认符合）
-        function isSampleDay(){
-//            获取日期，如果为今日消费就是今天的日期
-            var today =  $("#show_hf_date").text();
-
-            if($("#show_hf_date").text().toString()=="今日消费"){
-                today = new Date().toLocaleDateString();
-            }
-//          获取日期输入框的值
-            var reg=new RegExp("-","g");
-            var input_date = $("#dtp_input1").val().substring(0,10).replace(reg,"/");
-
-//          getTime()方法，就可以返回日期对应的数值
-            var today1 = new Date(today).getTime();
-            var input_date1 =  new Date(input_date).getTime();
-
-            if((today1==input_date1) || ($("#dtp_input1").val().length==0)){
-               return true;
-            }else{
-               return false;
-            }
+                    }
+                }
+            });
         }
+    }
 
-//       如果是今日，则改为今日消费，否则返回日期
-        function now_date(){
-            var today = new Date().toLocaleDateString();
-            var reg=new RegExp("-","g");
-            var input_date = $("#dtp_input1").val().substring(0,10).replace(reg,"/");
-            var today1 = new Date(today).getTime();
-            var input_date1 =  new Date(input_date).getTime();
-            if(today1==input_date1){
-                return "今日消费"
-            }else{
-                return  input_date;
+//  删除时，查看是否有下一条
+    function isNext(HF_ID){
+        console.log("查看是否有下一条"+HF_ID);
+        var date = $("#show_hf_date").text().toString();
+        var temp_HF_ID = "#"+HF_ID;
+        $.ajax({
+           type:'post',
+            url:"/zhichu/next",
+            data:{HF_ID:HF_ID,date:date},
+            dataType:'json',
+            success:function(data){
+                var last_id = $("#today_hf").find("li")[3].getAttribute("id");
+                last_id = "#"+last_id;
+                $(last_id).after(productLi(data[0]));
+//                $(temp_HF_ID).append(productLi(dat[0]));
+//                appendDiv(data[0]);
             }
-        }
+        });
+    }
     </script>
 
 </body>

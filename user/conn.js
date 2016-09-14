@@ -7,7 +7,8 @@ var db = function localConnect(){
 		user   : 'root',
 		password : '123456',
 		charset : 'utf8_general_ci',
-		database: 'dailyrecord'
+		database: 'dailyrecord',
+		multipleStatements:true
 	});
 
 	connection.connect();

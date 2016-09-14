@@ -1,0 +1,64 @@
+#######################################
+#
+#一些关于DailyRecord的问题记录以及解决办法
+#
+#问题：
+#   这是关于问题的说明
+#
+#解决方法：
+#   这是问题的详细解决办法
+#
+#######################################
+
+Jquery怎么对表单进行动态赋值
+
+$("input[name='hfmoney']").val();
+
+
+----------------------------------------
+
+nodejs mysql 模块怎么执行多条sql语句
+
+var sql1 = "select COUNT(HF_ID) as zm_number,SUM(HF_MONEY) as total_zc from table_zc where HF_FLAG='0';" +
+        "select * from table_zc where HF_FLAG='0' and HF_STAR='1';";
+
+要这样进行sql拼接
+
+sql连接还需配置一个属性
+multipleStatements:true
+
+multipleStatements: Allow multiple mysql statements per query.
+Be careful with this, it could increase the scope of SQL injection attacks. (Default: false)
+
+大概意思就是这样会增加sql注入攻击的风险
+
+------------------------------------------------
+
+编辑那里会有问题
+
+莫名其妙就进入了编辑，然后都不验证就提交数据
+
+进行数据验证就行
+
+编辑，填充表单时，也要对是否标注进行设置，但是貌似只能设置一次
+
+解决方法：
+$("**").attr("attrName");而jQuery的版本用的是1.9，这就是存在一个兼容性和稳定性问题。
+jQuery API明确说明，1.6+的jQuery要用prop，尤其是checkBox的checked的属性的判断，即
+
+这样绑定还是会触发的
+  $("#validateBtn").click(function(event){
+    event.preventDefault();
+    $("#validateBtn").onclick = update(HF_ID,data[0].HF_MONEY);
+   });
+
+   这样绑定就不会触发
+   $("#validateBtn").attr("onclick","update("+HF_ID+","+data[0].HF_MONEY+")");
+
+   参数可以用字符串凭拼接的方法
+
+   都改为这种形式
+
+
+
+

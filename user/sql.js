@@ -31,5 +31,15 @@ module.exports.add = function(sql,zcForm,callback){
 
 }
 
+module.exports.update = function(sql,zcForm,HF_ID,callback){
+    connection.query(sql,[zcForm,HF_ID],function(error, results){
+        if(error)
+            console.log("Error Selecting : %s ",error);
+        //console.log(today);
+        callback(error,results);
+    });
+
+}
+
 
 

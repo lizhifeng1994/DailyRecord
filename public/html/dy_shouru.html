@@ -11,6 +11,7 @@
 </head>
 <body>
 <div class="container">
+    <!-- 顶部-->
     <div class="col-lg-offset-2  col-lg-8">
         <nav>
             <ul class="nav nav-tabs pull-right">
@@ -25,6 +26,7 @@
         <h3 class="text-muted">DailyRecord--记录点滴生活</h3>
     </div>
 
+    <!-- 导航条-->
     <div class="col-lg-offset-2  col-lg-8">
         <nav class="navbar-default">
             <ol class="breadcrumb">
@@ -35,6 +37,7 @@
         </nav>
     </div>
 
+    <!-- form表单内容-->
     <div class="col-lg-offset-2 col-lg-5">
         <form class="form-horizontal" method="post" id="zhichuForm">
             <div class="form-group">
@@ -102,9 +105,13 @@
         </form>
     </div>
 
+    <!-- 列表栏-->
     <div class="col-lg-offset-0  col-lg-3">
         <div class="panel panel-primary">
-            <div class="panel-heading text-center">本月收入</div>
+            <div class="panel-heading">
+                <span style="margin-left: 10px;" id="show_hf_date">本月收入</span>
+                <strong class="pull-right" id="total_money">总计：0.00元</strong>
+            </div>
             <div class="panel-body">
 
                 <div class="pull-right">
@@ -115,7 +122,7 @@
                 </div>
             </div>
 
-            <div class="panel-footer">总计：</div>
+
         </div>
     </div>
 </div>
