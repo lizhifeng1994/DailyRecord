@@ -74,22 +74,22 @@ function productLi(data){
 }
 
 //  判断添加的是否和左侧列表栏的日期相符合（没有数据默认符合）
-function isSampleDay(){
+function isSampleDay(date1,date2){
 //            获取日期，如果为今日消费就是今天的日期
-    var today =  $("#show_hf_date").text();
+    var today = date1;
 
-    if($("#show_hf_date").text().toString()=="今日消费"){
+    if(date1.toString()=="今日消费"){
         today = new Date().toLocaleDateString();
     }
-//          获取日期输入框的值
+//  获取日期输入框的值
     var reg=new RegExp("-","g");
-    var input_date = $("#dtp_input1").val().substring(0,10).replace(reg,"/");
+    var input_date =date2.substring(0,10).replace(reg,"/");
 
-//          getTime()方法，就可以返回日期对应的数值
+//  getTime()方法，就可以返回日期对应的数值
     var today1 = new Date(today).getTime();
     var input_date1 =  new Date(input_date).getTime();
 
-    if((today1==input_date1) || ($("#dtp_input1").val().length==0)){
+    if((today1==input_date1) || (date2.length==0)){
         return true;
     }else{
         return false;
@@ -109,8 +109,6 @@ function now_date(){
         return  input_date;
     }
 }
-
-
 
 //  序列化表单
 function serializeForm(){

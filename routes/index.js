@@ -37,4 +37,6 @@ router.post('/zhichu/page',zhichu_Manage.page);
 
 router.post('/zhichu/next',zhichu_Manage.next);
 
+//根据日期展示当天记录
+router.post('/zhichu/dateshow',zhichu_Manage.dateshow);
 module.exports = router;

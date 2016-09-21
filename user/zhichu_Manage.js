@@ -5,7 +5,7 @@ var  connection = require('../user/conn.js').localConnect();
 var tools = require('../user/tools.js');
 var sql = require('../user/sql.js');
 
-module.exports.show= function(req,res){
+module.exports.show = function(req,res){
     //获取当前日期
     var today_date = tools.format(new Date());
 
@@ -27,8 +27,8 @@ module.exports.show= function(req,res){
     );
 };
 
-//  如果穿过来的消费日期和列表中的消费记录的日期不相同的话，则需要进行查询
-module.exports.add= function(req,res){
+//如果穿过来的消费日期和列表中的消费记录的日期不相同的话，则需要进行查询
+module.exports.add = function(req,res){
     var input =  req.body;
     //如果传过来的时间为空，那么就自动设置为当前时间
     var date = null;
@@ -76,7 +76,7 @@ module.exports.add= function(req,res){
         });
 };
 
-
+//查看信息明细
 module.exports.detail = function(req,res){
     var HF_ID = req.body.HF_ID;
     //console.log(HF_ID);
@@ -149,8 +149,8 @@ module.exports.update = function(req,res){
 
 };
 
-
-module.exports.page =function(req,res){
+//分页
+module.exports.page = function(req,res){
     if(req.body.date=="今日消费"){
         var today_date = tools.format(new Date());
     }else{
@@ -212,3 +212,17 @@ module.exports.next = function(req,res){
 
 }
 
+
+
+module.exports.dateshow = function(req,res){
+    var HF_DATE = req.body.HF_DATE;
+    var sql1 = "select HF_ID,HF_CONTENT,HF_MONEY from table_zc  where HF_FLAG='0' and HF_DATE=\'"+HF_DATE+"\'"+" order by HF_ID DESC limit 0,5";
+    sql.query(sql1, function(error,result) {
+            if(error){
+                console.log("有错误");
+            }
+
+            res.send(result)
+        }
+    );
+}

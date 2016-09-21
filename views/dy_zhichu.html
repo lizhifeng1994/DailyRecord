@@ -151,9 +151,10 @@
         <div class="col-lg-offset-0  col-lg-3">
             <div class="panel panel-primary">
                 <div class="panel-heading">
-                    <span style="margin-left: 10px;" id="show_hf_date">今日消费</span>
+                    <span style="margin-left: 10px;" id="show_hf_date" data-link-field="dtp_input2" class="input-append date form_datetime">今日消费</span>
                     <strong class="pull-right" id="total_money">总计：<%=today_money%>元</strong>
                     <p hidden id="pageNow"><%=pageNow%></p>
+                    <input type="hidden" id="dtp_input2" value="" readonly>
                 </div>
                 <div class="panel-body list-group" id="today_hf">
 
@@ -171,7 +172,7 @@
 
                     <% })
                     }else{ %>
-                    <span class="list-group-item" id="no_hf">今日还未有消费内容</span>
+                    <span class="list-group-item" id="no_hf">未有消费内容</span>
                     <%
                     }  %>
                     <div class="pull-right">
@@ -224,7 +225,7 @@
             });
         }
 
-//        删除
+//      删除
         function del(HF_ID){
             var HF_DEL = "#"+HF_ID;
             var HF_MONEY = $("#hfmoney").text();
@@ -243,7 +244,7 @@
                                 pageUp();
                             }else{
                                 var $sapn = $('<span>',{
-                                    text:'今日还未有消费内容',
+                                    text:'未有消费内容',
                                     class:'list-group-item',
                                     id:'no_hf'
                                 });
@@ -274,7 +275,9 @@
             if ($('#zhichuForm').data('bootstrapValidator').isValid()) {
                 if ((document.getElementById(HF_ID) != null)) {
 //                进行更新
-                    if (isSampleDay()) {
+                    var today =  $("#show_hf_date").text();
+                    var input_date=$("#dtp_input1").val();
+                    if (isSampleDay(today,input_date)) {
 //                   update
                         console.log("进来编辑")
                         $.ajax({
@@ -398,7 +401,7 @@
             startView: 2,
             forceParse: 0,
             showMeridian: 1,
-//            endDate:new Date(),//只能选择今天之前的日期
+            endDate:new Date(),//只能选择今天之前的日期
             minView: 2//不弹出小时，只能选择到天
         });
 
@@ -459,18 +462,23 @@
             });
         });
 
-//      增加
+//      增加消费记录
         function validateSubmit() {
             var date = now_date();
            $('#zhichuForm').bootstrapValidator('validate');
 
             if ($('#zhichuForm').data('bootstrapValidator').isValid()) {
+
                 var total_money = $("#total_money").text().replace(/[^\d.]/g,'');
 //                var data = {};
 //                $("#zhichuForm").serializeArray().map(function(x){data[x.name] = x.value;});
+                var today =  $("#show_hf_date").text();
+                var input_date=$("#dtp_input1").val();
+
+
                 var zcForm = serializeForm();
                 //如果不是添加当前的项目，则要对获取的日期进行判断
-                if(isSampleDay()){
+                if(isSampleDay(today,input_date)){
                     addToday(zcForm,1);
                 }
                 else{
@@ -492,13 +500,14 @@
                     $('#zhichuForm').bootstrapValidator("resetForm",true);
                     $("#today_hf").children(".list-group-item").remove();
                     var total_money = 0;
-                    for(i=0;i<data.length;i++){
+                    for(var i=data.length-1;i>=0;i--){
                         total_money += parseFloat(data[i].HF_MONEY);
                         appendDiv(data[i]);
                     }
 //                  保留小数点后两位
                     total_money = total_money.toFixed(2);
                     $("#total_money").text("总计:"+total_money+'元');
+
                     $("#show_hf_date").text(date);
 
                 }
@@ -542,7 +551,6 @@
 //        console.log($("#today_hf").find("li")[4]);
 //      如果当前消费记录数小于5条，就不需要去请求下一页
 //      如果当前页面满了，才下一页
-
         var date = $("#show_hf_date").text().toString();
         console.log(date);
         if(($("#today_hf").find("li").length-2)==5){
@@ -591,8 +599,7 @@
 //                    console.log(pageNow);
 //                    设置新的当前页
                         $("#pageNow").text(pageNow);
-                        console.log("当前页" + $("#pageNow").text());
-
+//                        console.log("当前页" + $("#pageNow").text());
                     }
                 }
             });
@@ -618,6 +625,44 @@
             }
         });
     }
+
+//  选择你的日期来查看选择日期的消费内容
+    $('#show_hf_date')
+        .datetimepicker()
+        .on('changeDate', function(ev){
+                var today =  $("#show_hf_date").text();
+                var input_date=$("#dtp_input2").val();
+
+                if(!isSampleDay(today,input_date)){
+                var date =  $("#dtp_input2").val().substring(0,10);
+                $.ajax({
+                    type:"POST",
+                    url:"/zhichu/dateshow",
+                    data:{HF_DATE:date},
+                    dataType:'json',
+                    success:function(data){
+                        $("#today_hf").children(".list-group-item").remove();
+                        var total_money = 0;
+                        for(var i=data.length-1;i>=0;i--){
+                            total_money += parseFloat(data[i].HF_MONEY);
+                            appendDiv(data[i]);
+                        }
+//                  保留小数点后两位
+                        total_money = total_money.toFixed(2);
+
+                        $("#total_money").text("总计:"+total_money+'元');
+                        var reg=new RegExp("-","g");
+                        input_date =input_date.substring(0,10).replace(reg,"/");
+                        today = new Date().toLocaleDateString();
+
+                        if((new Date(today).getTime())==(new Date(input_date).getTime())){
+                            input_date="今日消费";
+                        }
+                        $("#show_hf_date").text(input_date);
+                    }
+                });
+            }
+        });
     </script>
 
 </body>
