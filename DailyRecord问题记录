@@ -60,5 +60,13 @@ jQuery API明确说明，1.6+的jQuery要用prop，尤其是checkBox的checked�
    都改为这种形式
 
 
+   日期控件对设置结束日期有一些问题？
+   .on('changeDate',function(env){
+               $('.form_datetime').datetimepicker('setEndDate',new Date());
+           });
+
+   用这种方式就行了
+
+
 
 

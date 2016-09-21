@@ -395,7 +395,7 @@
         $('.form_datetime').datetimepicker({
 //            language:  'en',
             weekStart: 1,
-            todayBtn:  1,
+            todayBtn: true,
             autoclose: 1,
             todayHighlight: 1,
             startView: 2,
@@ -403,6 +403,8 @@
             showMeridian: 1,
             endDate:new Date(),//只能选择今天之前的日期
             minView: 2//不弹出小时，只能选择到天
+        }).on('changeDate',function(env){
+            $('.form_datetime').datetimepicker('setEndDate',new Date());
         });
 
 //      表单验证
@@ -630,9 +632,10 @@
     $('#show_hf_date')
         .datetimepicker()
         .on('changeDate', function(ev){
+                $('#show_hf_date').datetimepicker('setEndDate',new Date());
                 var today =  $("#show_hf_date").text();
                 var input_date=$("#dtp_input2").val();
-
+                console.log(input_date);
                 if(!isSampleDay(today,input_date)){
                 var date =  $("#dtp_input2").val().substring(0,10);
                 $.ajax({
