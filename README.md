@@ -19,7 +19,7 @@
 
 **JQuery**
 
-单页应用用JQuery总觉得有点作死，DOM操作太多了，奈何AngularJS还没学到家
+单页应用用JQuery总觉得有点作死，DOM操作太多了
 
 **DateTime Picker**
 
