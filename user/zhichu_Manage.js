@@ -1,6 +1,7 @@
 /**
  *支出的管理CRUD
  */
+'use strict'
 var  connection = require('../user/conn.js').localConnect();
 var tools = require('../user/tools.js');
 var sql = require('../user/sql.js');
@@ -12,16 +13,29 @@ module.exports.show = function(req,res){
     //一进来当前页肯定是1
     var pageNow = 1;
 
-    var sql1 = "select HF_ID,HF_CONTENT,HF_MONEY from table_zc  where HF_FLAG='0' and HF_DATE=\'"+today_date+"\'"+" order by HF_ID DESC limit 0,5";
+    var sql1 = "select HF_ID,HF_CONTENT,HF_MONEY from table_zc  where HF_FLAG='0' and HF_DATE=\'"+today_date+"\'"+" order by HF_ID DESC limit 0,5;"
+    + "select SUM(HF_MONEY) as today_money from table_zc where  HF_FLAG='0' and HF_DATE=\'"+today_date+"\'";
     //var sql2 = "select SUM(HF_MONEY) as today_money from table_zc where  HF_FLAG='0' and HF_DATE=\'"+today_date+"\'";
     sql.query(sql1, function(error,result) {
             //console.log(result1);
-            var today_money = 0;
-            for(i=0;i<result.length;i++){
-                today_money = parseFloat(today_money)+parseFloat(result[i].HF_MONEY);
+            console.log(sql1);
+            //console.log("结果"+);
+            //result = JSON.stringify();
+            //console.log(result[0]);
+            var data = result[0];
+            if(result[1][0].today_money == null){
+                var today_money = parseFloat(0).toFixed(2);
+            }else{
+                var today_money = result[1][0].today_money.toFixed(2);
             }
-            today_money = today_money.toFixed(2);
-            res.render('dy_zhichu',{ data:result,today_money:today_money,today_date:today_date,pageNow:pageNow});
+            //console.log(result[1][0].today_money);
+            //var today_money = result[1][0].today_money;
+            //console.log(today_money);
+            //for(var i=0;i<result.length;i++){
+            //    today_money = parseFloat(today_money)+parseFloat(result[i].HF_MONEY);
+            //}
+            //today_money = today_money.toFixed(2);
+            res.render('dy_zhichu',{ data:data,today_money:today_money,today_date:today_date,pageNow:pageNow});
         }
 
     );
@@ -180,7 +194,7 @@ module.exports.page = function(req,res){
             res.send(result)
         }
     );
-}
+};
 
 //得到你要删除的下一条数据
 module.exports.next = function(req,res){
@@ -210,10 +224,9 @@ module.exports.next = function(req,res){
     });
     //res.send(1);
 
-}
+};
 
-
-
+//根据日期显示内容
 module.exports.dateshow = function(req,res){
     var HF_DATE = req.body.HF_DATE;
     var sql1 = "select HF_ID,HF_CONTENT,HF_MONEY from table_zc  where HF_FLAG='0' and HF_DATE=\'"+HF_DATE+"\'"+" order by HF_ID DESC limit 0,5";
@@ -226,3 +239,4 @@ module.exports.dateshow = function(req,res){
         }
     );
 }
+

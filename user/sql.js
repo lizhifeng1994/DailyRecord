@@ -24,11 +24,6 @@ module.exports.add = function(sql,zcForm,callback){
         //console.log(today);
         callback(error,results);
     });
-
-    //console.log(sql);
-    //
-    //console.log(zcForm);
-
 }
 
 module.exports.update = function(sql,zcForm,HF_ID,callback){

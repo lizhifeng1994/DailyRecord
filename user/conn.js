@@ -8,6 +8,7 @@ var db = function localConnect(){
 		password : '123456',
 		charset : 'utf8_general_ci',
 		database: 'dailyrecord',
+		//开启多语句查询
 		multipleStatements:true
 	});
 

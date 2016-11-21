@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="../vendor/bootstrap/css/bootstrap.css"/>
     <link rel="stylesheet" href="../dist/css/bootstrapValidator.css"/>
     <link href="../css/bootstrap-datetimepicker.min.css" rel="stylesheet">
+    <link rel="icon" href="../img/dailyrecord.ico" type="image/x-icon">
     <style>
         .dask {
             width:250px;
@@ -74,7 +75,7 @@
 
         <!-- form表单内容-->
         <div class="col-lg-offset-2 col-lg-5">
-            <form class="form-horizontal" id="zhichuForm" action="/zhichu/add">
+            <form class="form-horizontal" id="zhichuForm">
                 <div class="form-group">
                     <div class="col-lg-5 col-lg-offset-2">
                         <div class="input-group">
@@ -192,6 +193,7 @@
     <script src="../js/bootstrap-datetimepicker.min.js" type="text/javascript"></script>
     <script type="text/javascript" src="../js/angular.min.js"></script>
     <script type="text/javascript" src="../js/comm.js"></script>
+
     <script type="text/javascript">
 
 //      删除时查看消费具体明细
@@ -288,8 +290,8 @@
                             success: function (data) {
                                 if (data) {
 //                               console.log("编辑成功"+data[0].HF_ID);
-                                console.log("数据库"+data.HF_MONEY);
-                                console.log("传过来的"+HF_MONEY);
+//                                console.log("数据库"+data.HF_MONEY);
+//                                console.log("传过来的"+HF_MONEY);
 
                                     var diff = parseFloat(data.HF_MONEY) - parseFloat(HF_MONEY);
 
@@ -313,20 +315,22 @@
                                 }
                             }
                         });
-                    } else {
+                    }
+                    else {
 //                   如果你修改了日期
                         var date = now_date();
                         del(HF_ID);
-                        addNotToday(zcForm, 0, date);
 
                         $("#validateBtn").attr("onclick",validateSubmit());
 
                         $("#validateBtn").text("保存");
                     }
-                } else {
+                }
+                else {
+
 //                console.log("不存在");
 //                进行新增
-                    validateSubmit();
+//                    validateSubmit();
 //                    $("#validateBtn").click(function (event) {
 //                        event.preventDefault();
 //                        $("#validateBtn").onclick = validateSubmit();
@@ -380,16 +384,16 @@
             });
         }
 
-//        鼠标悬停触发事件
-        $(".list-group-item").hover(
-                function () {
-                    $(this).find(".dask").stop().delay(50).animate({"top":0,opacity:0.5},300)
-                },
-                function () {
-                    $(this).find(".dask").stop().animate({"top":-200,opacity:0},300)
-                }
-
-        );
+////        鼠标悬停触发事件
+//        $(".list-group-item").hover(
+//                function () {
+//                    $(this).find(".dask").stop().delay(50).animate({"top":0,opacity:0.5},300)
+//                },
+//                function () {
+//                    $(this).find(".dask").stop().animate({"top":-200,opacity:0},300)
+//                }
+//
+//        );
 
 //       日期插件的属性设置
         $('.form_datetime').datetimepicker({
@@ -644,16 +648,26 @@
                     data:{HF_DATE:date},
                     dataType:'json',
                     success:function(data){
-                        $("#today_hf").children(".list-group-item").remove();
                         var total_money = 0;
-                        for(var i=data.length-1;i>=0;i--){
-                            total_money += parseFloat(data[i].HF_MONEY);
-                            appendDiv(data[i]);
-                        }
-//                  保留小数点后两位
-                        total_money = total_money.toFixed(2);
+                        $("#today_hf").children(".list-group-item").remove();
+                        if(data.length==0){
+                            var $sapn = $('<span>',{
+                                text:'未有消费内容',
+                                class:'list-group-item',
+                                id:'no_hf'
+                            });
 
-                        $("#total_money").text("总计:"+total_money+'元');
+                            $("#today_hf").prepend($sapn);
+
+                        }else{
+                            for(var i=data.length-1;i>=0;i--){
+                                total_money += parseFloat(data[i].HF_MONEY);
+                                appendDiv(data[i]);
+                            }
+    //                  保留小数点后两位
+
+
+                        }
                         var reg=new RegExp("-","g");
                         input_date =input_date.substring(0,10).replace(reg,"/");
                         today = new Date().toLocaleDateString();
@@ -662,6 +676,8 @@
                             input_date="今日消费";
                         }
                         $("#show_hf_date").text(input_date);
+                        total_money = total_money.toFixed(2);
+                        $("#total_money").text("总计:"+total_money+'元');
                     }
                 });
             }
