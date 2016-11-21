@@ -51,3 +51,8 @@ BootSTrap风格的日期选择插件
 - 不同的项目需求选择不同的框架，像我这个记账的，轻量级，就不要用SSM这种框架来写了
 - 不精通前端，还是老老实实用BootStrap来写
 - 多用Google和[stackoverflow](http://stackoverflow.com/)来查找问题，事半功倍
+
+
+## 完成进度
+
+2016/09/21：可以选择日期进行显示消费记录
