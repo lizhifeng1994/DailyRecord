@@ -168,3 +168,59 @@ select * from table_zc limit 0,5
 数据库就用的MYSQL
 
 今天把支出页面写完
+
+
+我要把两个表的数据放到一个表
+然后对其建立一个触发器
+
+增加一条记录时，对其表增加一条记录
+修改时，相应修改
+取消标记时，删除数据
+
+但是我数据库中已经有真实数据了
+
+所以我要先把数据存入到这个表中，并且按时间顺序
+
+定义两个游标用来存储收入和支出的标注账目
+
+如果
+
+table_star(标注账目表)
+
+STAR_ID(主键)
+ID(收入或者花费ID)
+STAR_DATE(日期)
+STAR_CONTENT(类容)
+STAR_TYPE(类型 收入？支出)
+STAR_MONEY(金钱)
+
+首先我要一个表，因为我要进行分页
+
+当我每次要插入一条标注账目时，也应该对该表进行插入
+
+当我撤销标注时，应该对其删除
+
+当我进行修改时也应该对其进行修改
+
+update触发器有以下几种情况
+
+当我是标注账目(OLD.SR_FLAG="0" AND OLD.SR_STAR="1" AND NEW.SR_STAR="0")进行撤销时
+DELETE
+
+当我不是标注账目然后把它标注成标注账目是OLD.SR_FLAG="0" AND OLD.SR_STAR="0" AND NEW.SR_STAR="1"
+INSERT
+
+当我删除标注账目时(NEW.SR_FLAG="1" AND OLD.SR_STAR="1")
+DELETE
+
+当我编辑这个账目的其他类容时(NEW.SR_FLAG="0" AND NEW.SR_STAR="1")
+UPDATE
+
+
+我觉得那个明细弹出框有点丑啊
+
+如果starType==0 SR&&ZC
+
+如果starType==1 ZC
+
+如果starType==2 SR

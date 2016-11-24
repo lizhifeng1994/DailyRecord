@@ -29,16 +29,12 @@ module.exports.show = function(req,res){
             total_money = result[1][0].SR_MONEY
             count = result[1][0].SR_COUNT;
         }
-        //if(result[1][0].SR_MONEY==undefined){
-        //    total_money = parseFloat(0).toFixed(2);
-        //}else{
-        //    //total_money = result[1][0].SR_MONEY
-        //}
         res.send({list:result[0],total_money:total_money,monthList:count});
     });
 };
 
 module.exports.add = function(req,res){
+    console.log(req.body.shouru);
     var sql1 = "INSERT INTO table_sr set ? ";
     sql.add(sql1,req.body.shouru,function(error,result){
         if(error){

@@ -12,13 +12,17 @@ router.get('/', function(req, res){
 	return res.redirect('/home');
 });
 
-//router.get('/home',function(req,res){
-//	var date = new Date();
-//	date = tools.format(date);
-//	res.render('home',{title:'我的生活账本',date:date});
-//});
+router.get('/home',function(req,res){
+	var date = new Date();
+	date = tools.format(date);
+	res.render('home',{title:'我的生活账本',date:date});
+});
 
-router.get('/home',home_Manage.show);
+router.post('/home/total',home_Manage.show);
+router.post('/home/detail',home_Manage.getDetail);
+router.post('/home/cancelStar',home_Manage.cancelStar);
+
+//router.get('/home',home_Manage.show);
 
 router.get('/shouru',function(req,res){
 	var date = new Date();
@@ -26,10 +30,6 @@ router.get('/shouru',function(req,res){
 	res.render('dy_shouru',{date:date});
 });
 
-router.get('/test',function(req,res){
-
-	res.send('跨域请求成功');
-});
 
 router.get('/zhichu/analysis',function(req,res){
 	res.render('zhichu_Analysis');

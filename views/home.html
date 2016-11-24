@@ -2,46 +2,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>我的生活账本</title>
+    <title><%=title%></title>
     <link rel="stylesheet" href="../vendor/bootstrap/css/bootstrap.css"/>
     <link rel="stylesheet" href="../dist/css/bootstrapValidator.css"/>
     <link href="../css/bootstrap-datetimepicker.min.css" rel="stylesheet">
 </head>
 <body>
-<div class="container">
+<div class="container" id="app">
+    <!-- Modal 标注账目明细 -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <!-- modal-sm来改变模态框的大小 -->
+        <div class="modal-dialog modal-sm" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">账目明细</h4>
+                </div>
+                <div class="modal-body">
+                    <!-- 具体明细内容-->
+                    <p><strong>地点：</strong><span>{{starDetail.ADDRESS}}</span></p>
+                    <p><strong>内容：</strong><span>{{starDetail.CONTENT}}</span></p>
+                    <p><strong>金额：</strong><span>{{starDetail.MONEY}}</span></p>
+                    <p><strong>备注：</strong><pre>{{starDetail.MARK}}</pre></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    <button type="button" class="btn btn-danger" @click="cancelStar(starDetail.ID,starDetail.STAR_TYPE)">取消标注</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- 顶部-->
     <div class="col-lg-offset-2  col-lg-8">
         <nav>
             <ul class="nav nav-tabs pull-right">
                 <li >
-                    <a href="/home"><span class="glyphicon glyphicon-tasks"></span>我的生活账本</a>
+                    <a href="/"><span class="glyphicon glyphicon-tasks"></span>我的生活账本</a>
                 </li>
                 <li >
-                    <a href="#"><span class="glyphicon glyphicon-time" ></span><%=date%></a>
-                </li>
+                     <a href="#"><span class="glyphicon glyphicon-time" ></span><%=date%></a>
+                 </li>
             </ul>
         </nav>
         <h3 class="text-muted">DailyRecord--记录点滴生活</h3>
+
     </div>
 
-    <!-- 导航条-->
+    <!-- 支出收入分析 -->
     <div class="col-lg-offset-2  col-lg-8">
-        <nav class="navbar-default">
-            <ol class="breadcrumb">
-                <li><span class="glyphicon glyphicon-home"></span><a href="#">Home</a></li>
-                <li><a href="home.html">我的生活账本</a></li>
-
-            </ol>
-        </nav>
-    </div>
-
-    <!-- 分析-->
-    <div class="col-lg-offset-2  col-lg-8">
+        <!-- 累计数目-->
         <div class="panel panel-default">
             <div class="panel-heading">
                 <nav>
                     <ul class="nav nav-tabs pull-right">
-                        <li >
+                        <li>
                             <!-- Single button -->
                             <div class="btn-group">
                                 <button  type="button" id="dropdownMenu2" class="btn btn-default btn-success" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -82,101 +97,192 @@
                 <h4>我的生活账本</h4>
             </div>
         </div>
-    </div>
 
-    <!-- 支出、收入、账目数-->
-    <div  class="col-lg-offset-3  col-lg-8">
-        <div class="col-md-4">
-            <div class="caption">
-                <h3>累计支出</h3>
-                <p><h2 style="color: #ff254a">-<%=data.total_zc%></h2></p>
+        <!-- 支出、收入、账目数目 -->
+        <div  class="col-lg-offset-0  col-lg-12 jumbotron" style="height:180px">
+            <div class="row col-lg-offset-1">
+                <div class="col-sm-6 col-md-4">
+                    <div class="caption">
+                        <h2>累计支出</h2>
+                        <p><h2 style="color: #ff254a">-{{total.total_ZC}}</h2></p>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-md-4">
+                    <div class="caption">
+                        <h2>累计收入</h2>
+                        <p><h2 style="color: #09b4ff">+{{total.total_SR}}</h2></p>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-md-4">
+                    <div class="caption">
+                        <h2>账目数</h2>
+                        <p><h2>{{total.total_ZM}}</h2></p>
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="col-md-4">
-            <div class="caption">
-                <h3>累计收入</h3>
-                <p><h2 style="color: #09b4ff">+<%=data.total_sr%></h2></p>
-            </div>
+
+        <!-- 选择 -->
+        <div>
+            <ul class="nav navbar-header">
+                <li class="dropdown">
+                    <a href="#" id="myTabDrop1" class="dropdown-toggle"
+                       data-toggle="dropdown">{{starContentType}}
+                        <b class="caret"></b>
+                    </a>
+                    <ul class="dropdown-menu" role="menu" aria-labelledby="myTabDrop1">
+                        <li><a @click="getStarSR()" tabindex="-1" data-toggle="tab">收入</a></li>
+                        <li><a @click="getStarZC()" tabindex="-1" data-toggle="tab">支出</a></li>
+                    </ul>
+                </li>
+            </ul>
         </div>
-        <div class="col-md-4">
-            <div class="caption">
-                <h3>账目</h3>
-                <p><h2><%=data.total_zm_number%></h2></p>
-            </div>
-        </div>
-    </div>
 
-    <div class="col-lg-offset-2  col-lg-8">
-
-        <ul id="myTab" class="nav  navbar-header" style="margin-top: 10px;">
-            <!--<li class="active">-->
-            <!--<a href="#home" data-toggle="tab">-->
-            <!--我的标注账目-->
-            <!--</a>-->
-            <!--</li>-->
-            <!--<li><a href="#ios" data-toggle="tab"></a></li>-->
-            <li class="dropdown">
-                <a href="#" id="myTabDrop1" class="dropdown-toggle"
-                   data-toggle="dropdown">我的标注账目
-                    <b class="caret"></b>
-                </a>
-                <ul class="dropdown-menu" role="menu" aria-labelledby="myTabDrop1">
-                    <li><a href="#jmeter" tabindex="-1" data-toggle="tab">收入</a></li>
-                    <li><a href="#ejb" tabindex="-1" data-toggle="tab">支出</a></li>
-                </ul>
-            </li>
-        </ul>
-
-        <table class="table table-hover text-center">
-            <tbody>
+        <!-- 我的标注账目 -->
+        <div>
+            <table  class="table table-hover text-center">
+                <tbody>
                 <td><strong>时间</strong></td>
-                <td><strong>消费内容</strong></td>
+                <td><strong>内容</strong></td>
                 <td><strong>类别</strong></td>
                 <td><strong>金额</strong></td>
                 <td><strong>操作</strong></td>
-            </tbody>
-            <% if(data.hf_star_list.length) {
-            data.hf_star_list.forEach(function(detail){ %>
-            <tr>
+                <tr v-if="starListFlag" v-for="item in starList">
+                    <td>{{item.STAR_DATE}}</td>
+                    <td>{{item.STAR_CONTENT}}</td>
+                    <td>{{item.STAR_TYPE==1?'支出':'收入'}}</td>
+                    <td><button type="button" class="btn btn-xs btn-danger">{{item.STAR_TYPE==1?'-':'+'}}{{item.STAR_MONEY}}元</button></td>
+                    <td>
+                        <button type="button" @click="getDetail(item.STAR_TYPE,item.ID)" class="btn btn-xs btn-primary">查看详细</button>
+                        <!--<button type="button" class="btn btn-xs btn-danger">取消标记</button>-->
+                    </td>
+                </tr>
+                <tr v-else>
+                    <td colspan="5">
+                       未有标注账目？
+                        <template v-if="starType==0">
+                            <a href="/shouru">添加标注收入</a>/<a href="/zhichu">添加标注支出</a>
+                        </template>
+                        <template v-if="starType==1">
+                            <a href="/shouru">添加标注支出</a>
+                        </template>
+                        <template v-if="starType==2">
+                            <a href="/shouru">添加标注收入</a>
+                        </template>
 
-                <td><%=detail.HF_DATE%></td>
-                <td><%=detail.HF_CONTENT%></td>
-                <td>支出</td>
-                <td><button type="button" class="btn btn-xs btn-danger">-<%=detail.HF_MONEY%>元</button></td>
-                <td>
-                    <button type="button" class="btn btn-xs btn-primary">查看详细</button>
-                    <button type="button" class="btn btn-xs btn-danger">取消标记</button>
-                </td>
-            </tr>
-            <% })}%>
-
-            <!--<tr>-->
-                <!--<td>2016/07/19</td>-->
-                <!--<td>长沙</td>-->
-                <!--<td>收入</td>-->
-                <!--<td><button type="button" class="btn btn-xs btn-info">190元</button></td>-->
-                <!--<td>-->
-                    <!--<button type="button" class="btn btn-xs btn-primary">查看详细</button>-->
-                    <!--<button type="button" class="btn btn-xs btn-danger">取消标记</button>-->
-                <!--</td>-->
-            <!--</tr>-->
-            <!-- 分页-->
-            <tfoot>
-            <tr>
-                <td colspan="4"></td>
-                <td class="pagination pagination-sm">
-                    <li><a href="#">&leftarrow;</a></li>
-                    <li><a href="#">&rightarrow;</a></li>
-                </td>
-            </tr>
-            </tfoot>
-        </table>
-    </div>
-
+                    </td>
+                </tr>
+                </tbody>
+                <tfoot  v-if="starListFlag" >
+                    <td colspan="4"></td>
+                    <td>
+                        <nav>
+                            <ul class="pagination pagination-sm">
+                                <li><a @click="pageUp()">&laquo;</a></li>
+                                <li><a @click="pageDown()">&raquo;</a></li>
+                            </ul>
+                        </nav>
+                    </td>
+                </tfoot>
+            </table>
+        </div>
+        </div>
 </div>
 <script type="text/javascript" src="../vendor/jquery/jquery-1.10.2.min.js"></script>
 <script type="text/javascript" src="../vendor/bootstrap/js/bootstrap.min.js"></script>
-<script type="text/javascript" src="../dist/js/bootstrapValidator.js"></script>
-<script src="../js/bootstrap-datetimepicker.min.js" type="text/javascript"></script>
+<script src="../js/vue.js" type="text/javascript"></script>
+<script src="../js/vue-resource.min.js" type="text/javascript"></script>
+<script type="text/javascript">
+    var home = new Vue({
+        el:'#app',
+        data:{
+            total:"",
+            starList:[{}],
+            starDetail:"",
+            starListLength:0,
+            starListFlag:false,
+            pageNow:1,
+            starType:0,
+        },
+        mounted:function(){
+          this.getTotal(this.pageNow,0);
+        },
+        computed:{
+            starContentType:function(){
+                if(this.starType==0){
+                    return "我的标注账目";
+                }else if(this.starType==1){
+                    return "支出";
+                } else {
+                    return "收入"
+                }
+            }
+        },
+        methods:{
+            getStarSR:function(){
+              this.starType=2;
+              this.getTotal(1,this.starType);
+            },
+            getStarZC:function(){
+                this.starType=1;
+                this.getTotal(1,this.starType);
+            },
+            pageUp:function(){
+                if(this.pageNow>1){
+                    this.pageNow -=1;
+                    this.getTotal(this.pageNow,this.starType);
+                }
+            },
+            pageDown:function(){
+               if((this.starList.length==5)&&(this.pageNow*5<this.starListLength)){
+                    this.pageNow +=1;
+                    this.getTotal(this.pageNow,this.starType);
+                }
+            },
+            cancelStar:function(ID,STAR_TYPE){
+                this.$http.post('/home/cancelStar',{ID:ID,STAR_TYPE:STAR_TYPE})
+                    .then(function(response){
+                            $('#myModal').modal('hide');
+                            this.getTotal(1,this.starType);
+                        })
+                    .catch(function(response){
+                            console.log("有错误");
+                        })
+            },
+            getDetail:function(STAR_TYPE,ID){
+                this.$http.post('/home/detail',{STAR_TYPE:STAR_TYPE,ID:ID})
+                    .then(function(response) {
+                            this.starDetail = response.data.result;
+                            this.starDetail.STAR_TYPE = STAR_TYPE;
+                            $('#myModal').modal('show');
+                        })
+                    .catch(function(response) {
+                            console.log("有错误");
+                        })
+
+            },
+            getTotal:function(pageNow,STAR_TYPE){
+                this.$http.post('/home/total',{pageNow:pageNow,STAR_TYPE:STAR_TYPE})
+                        .then(function (response) {
+                            if(response.data.starList.length>0){
+                                this.total = response.data.total;
+//                            console.log(response.data.total);
+                                this.starList = response.data.starList;
+                                this.starListLength =this.total.total_STAR;
+                                this.starListFlag = true;
+//                                console.log( this.starListLength);
+                            }else{
+                                this.starList=[{}];
+                                this.starListFlag = false;
+                            }
+//                            console.log(this.starList);
+                        })
+                        .catch(function (response) {
+                            console.log("有错误");
+                        })
+            }
+        }
+    });
+</script>
 </body>
 </html>

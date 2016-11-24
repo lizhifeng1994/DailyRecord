@@ -7,36 +7,58 @@ var  connection = require('../user/conn.js').localConnect();
 var tools = require('../user/tools.js');
 var sql = require('../user/sql.js');
 module.exports.show= function(req,res){
-    console.log("123");
-    var date = new Date();
-    date = tools.format(date);
-    console.log(date);
-    var sql1 = "select COUNT(HF_ID) as zm_number,SUM(HF_MONEY) as total_zc from table_zc where HF_FLAG='0';"
-        + "select HF_DATE,HF_CONTENT,HF_MONEY,HF_ID from table_zc where HF_FLAG='0' and HF_STAR='1';"
-        + "select COUNT(SR_ID) as zm_number,SUM(SR_MONEY) as total_sr from table_sr where SR_FLAG='0';"
-        + "select * from table_sr where SR_FLAG='0' and SR_STAR='1';";
+    //console.log(req.body.pageNow);
+    var pageSize = (req.body.pageNow-1)*5;
+    var STAR_TYPE=req.body.STAR_TYPE;
+    console.log(STAR_TYPE);
+    var sql_type = "";
+    if(STAR_TYPE==0){
+        sql_type="select ID,STAR_DATE,STAR_CONTENT,STAR_TYPE,STAR_MONEY from table_star ORDER BY STAR_DATE DESC limit "+pageSize+",5";
+    }else{
+        sql_type="select ID,STAR_DATE,STAR_CONTENT,STAR_TYPE,STAR_MONEY from table_star WHERE STAR_TYPE="+STAR_TYPE+" ORDER BY STAR_DATE DESC limit "+pageSize+",5";
+    }
+    console.log(sql_type);
+    var sql1 = "CALL getTotal(@total_zc,@total_sr,@total_zm,@total_star);"+sql_type;
+    var total = "";
     sql.query(sql1,function(error,result){
-        //返回到anjularJS的数据
-        //var total_zc = (result[0][0].total_zc+0).toFixed(2);
-        //var total_sr = (result[2][0].total_sr+0).toFixed(2);
-        //var total_zm_number = result[0][0].zm_number+result[2][0].zm_number;
-        //var hf_star_list = result[1];
-        //var sr_star_list = result[3];
-
-
-        //console.log(result[1][0]);
-        console.log(result)
-        var data = {
-            total_zc:(result[0][0].total_zc+0).toFixed(2),
-            total_sr:(result[2][0].total_sr+0).toFixed(2),
-            total_zm_number:result[0][0].zm_number+result[2][0].zm_number,
-            hf_star_list:result[1],
-            sr_star_list:result[3]
-        };
-
-        console.log(data.hf_star_list);
-
-        res.render('home',{ data:data,date:date});
+        if(error){
+            console.log("有错误")
+        }
+        total = result[0][0];
+        res.send({total:total,starList:result[2]});
     });
-    //res.render('home',{title:"我的生活账本"});
+};
+
+module.exports.getDetail = function(req,res){
+    var STAR_TYPE = req.body.STAR_TYPE;
+    var ID = req.body.ID;
+    var sql1 = "";
+    if(parseInt(STAR_TYPE)==1){
+        sql1 = "select HF_ID AS ID,HF_ADDRESS AS ADDRESS,HF_CONTENT AS CONTENT,HF_MONEY AS MONEY,HF_MARK AS MARK  from table_zc where HF_ID='"+ID+"'";
+    }else{
+        sql1 = "select SR_ID AS ID,SR_ADDRESS AS ADDRESS,SR_CONTENT AS CONTENT,SR_MONEY AS MONEY,SR_MARK AS MARK  from table_sr where SR_ID='"+ID+"'";
+    }
+    sql.query(sql1,function(error,result){
+        if(error){
+            console.log(error);
+        }
+        res.send({result:result[0]});
+    });
+};
+
+module.exports.cancelStar = function(req,res){
+    var STAR_TYPE = req.body.STAR_TYPE;
+    var ID = req.body.ID;
+    var sql1 = "";
+    if(parseInt(STAR_TYPE)==1){
+        sql1 = "UPDATE table_zc SET HF_STAR='0' WHERE HF_ID='"+ID+"'";
+    }else{
+        sql1 = "UPDATE table_sr SET SR_STAR='0' WHERE SR_ID='"+ID+"'";
+    }
+    sql.query(sql1,function(error,result){
+        if(error){
+            console.log(error);
+        }
+        res.send(result);
+    });
 };
