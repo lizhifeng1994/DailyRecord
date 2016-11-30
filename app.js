@@ -9,7 +9,9 @@ var bodyParser = require('body-parser');
 
 //路由控制
 var routes = require('./routes/index');
-var users = require('./routes/users');
+//var users = require('./routes/user');
+var zhichu = require('./routes/zhichuPath');
+var shouru = require('./routes/shouruPath');
 
 var app = express();
 
@@ -36,6 +38,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 //匹配路径和路由
 app.use('/', routes);
+//app.use('/users', users);
+app.use('/zhichu',zhichu);
+app.use('/shouru',shouru);
 //app.use('/users', users);
 //app.use('/home',routes);
 //app.use('/shouru',routes);

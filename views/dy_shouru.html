@@ -172,8 +172,8 @@
                             <b>{{item.SR_CONTENT}}</b>
                             <span class="label label-danger pull-right">+{{item.SR_MONEY}}元</span>
                             <div  :class="[parseInt(item.SR_FLAG)? 'dask_listHV':'dask']">
-                                <button class="btn btn-primary"  style="margin-left: 20px;" @click="showEditDetai(index)">编辑</button>
-                                <button class="btn btn btn-warning" @click="showDelDetail(index)">删除</button>
+                                <button class="btn btn-primary"  style="margin-left: 20px;" @click="showEditDetai(item.SR_ID)">编辑</button>
+                                <button class="btn btn btn-warning" @click="showDelDetail(item.SR_ID)">删除</button>
                             </div>
                         </li>
                     </template>
@@ -220,7 +220,7 @@
                 var reg=new RegExp("/","g");
                 var date = new Date().toLocaleString().substr(0,7).replace(reg,"-");
                 if(date==this.monthDate){
-                    return "今日消费"
+                    return "本月收入"
                 }else{
                     return this.monthDate;
                 }
@@ -232,7 +232,7 @@
                 if ($('#shouruForm').data('bootstrapValidator').isValid()) {
                     this.shouru.SR_STAR = (this.shouru.SR_STAR != 0) ? '1' : '0'
                     this.shouru.SR_DATE = this.getDate();
-                    this.$http.post('/shouru/update', {shouru: this.shouru})
+                    this.$http.post('/shouru/edit', {shouru: this.shouru})
                             .then(function (response) {
                                 this.getList(this.monthDate, this.pageNow);
                                 this.clean();
@@ -242,18 +242,25 @@
                             })
                 }
             },
-            showEditDetai:function(i){
-                this.editFlag = true;
-                this.shouru = JSON.parse(JSON.stringify(this.list[i]))
-                this.shouru.SR_FLAG = '0';
+            showEditDetai:function(SR_ID){
+                this.$http.post('/shouru/detail',{SR_ID:SR_ID})
+                        .then(function(response){
+                            this.shouru = response.data.shouru;
+                            this.editFlag = true;
+                            $("input[name='srdate']").val(this.shouru.SR_DATE);
+                        })
+                        .catch(function(resonse){
+
+                        })
+
 //                this.shouru = this.list[i];
-                $("input[name='srdate']").val(this.shouru.SR_DATE);
+
                 console.log(this.shouru)
             },
             del:function(SR_ID){
                 this.$http.post('/shouru/del',{SR_ID:SR_ID})
                     .then(function(response){
-                        if(this.list.length==1){
+                        if((this.list.length==1)&&(this.pageNow>1)){
                             this.pageNow -= 1
                             this.getList(this.monthDate,this.pageNow);
                         }else{
@@ -265,9 +272,15 @@
 
                     })
             },
-            showDelDetail:function(i){
-                this.srDetail = this.list[i];
-                $('#myModal').modal('show');
+            showDelDetail:function(SR_ID){
+                this.$http.post('/shouru/detail',{SR_ID:SR_ID})
+                        .then(function(response){
+                            this.srDetail = response.data.shouru;
+                            $('#myModal').modal('show');
+                        })
+                        .catch(function(resonse){
+
+                        })
             },
             pageUp:function(){
                 if(this.pageNow>1){

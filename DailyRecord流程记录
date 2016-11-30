@@ -224,3 +224,11 @@ UPDATE
 如果starType==1 ZC
 
 如果starType==2 SR
+
+先把支出页面改成vue的
+
+然后再将数据库操作用orm框架替代
+
+换成orm框架,但是这里只能执行一条之类的语句
+
+OK了，但是对于co、promise并不了解

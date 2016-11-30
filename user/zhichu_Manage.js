@@ -18,7 +18,7 @@ module.exports.show = function(req,res){
     //var sql2 = "select SUM(HF_MONEY) as today_money from table_zc where  HF_FLAG='0' and HF_DATE=\'"+today_date+"\'";
     sql.query(sql1, function(error,result) {
             //console.log(result1);
-            console.log(sql1);
+            //console.log(sql1);
             //console.log("结果"+);
             //result = JSON.stringify();
             //console.log(result[0]);
