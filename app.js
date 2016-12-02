@@ -12,7 +12,7 @@ var routes = require('./routes/index');
 //var users = require('./routes/user');
 var zhichu = require('./routes/zhichuPath');
 var shouru = require('./routes/shouruPath');
-
+var home = require('./routes/homePath');
 var app = express();
 
 //app.use(cors());
@@ -41,6 +41,7 @@ app.use('/', routes);
 //app.use('/users', users);
 app.use('/zhichu',zhichu);
 app.use('/shouru',shouru);
+app.use('/home',home);
 //app.use('/users', users);
 //app.use('/home',routes);
 //app.use('/shouru',routes);

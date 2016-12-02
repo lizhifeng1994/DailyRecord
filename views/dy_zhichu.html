@@ -96,7 +96,7 @@
                         </div>
                     </div>
                     <div class="col-lg-5">
-                        <div class="input-group date form_datetime"  data-date-format="dd MM yyyy" data-link-field="dtp_input1">
+                        <div class="input-group date form_datetime"  data-date-format="yyyy-mm-dd" data-link-field="dtp_input1">
                             <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
                             <input class="form-control"  name="hfdate" type="text" value="" data-date="" data-date-format="dd MM yyyy" readonly>
                             <!-- 后台获取数据的-->
@@ -165,7 +165,7 @@
         <div class="col-lg-offset-0  col-lg-3">
             <div class="panel panel-primary">
                 <div class="panel-heading">
-                    <span style="margin-left: 10px;" id="show_hf_date" data-link-field="dtp_input2" class="input-append date form_datetime1">{{nowdate}}</span>
+                    <span style="margin-left: 10px;" id="show_hf_date"  data-date-format="yyyy-mm-dd" data-link-field="dtp_input2" class="input-append date form_datetime1">{{nowdate}}</span>
                     <strong class="pull-right" id="total_money">总计：{{todayMoney}}元</strong>
                     <input type="hidden" id="dtp_input2" value="" readonly>
                 </div>
@@ -185,7 +185,6 @@
                     <template v-else>
                         <span class="list-group-item" id="no_hf">未有支出内容</span>
                     </template>
-
                     <!--<span class="list-group-item" id="no_hf">未有消费内容</span>-->
 
                     <div class="pull-right">
@@ -203,7 +202,7 @@
     <script type="text/javascript" src="../vendor/bootstrap/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="../dist/js/bootstrapValidator.js"></script>
     <script src="../js/bootstrap-datetimepicker.min.js" type="text/javascript"></script>
-    <!--<script type="text/javascript" src="../js/comm.js"></script>-->
+    <script type="text/javascript" src="../js/comm.js"></script>
     <script src="../js/vue.js" type="text/javascript"></script>
     <script src="../js/vue-resource.min.js" type="text/javascript"></script>
     <script type="text/javascript">
@@ -216,17 +215,15 @@
                 showList:false,
                 pageNow:1,
                 zhichu:{HF_KIND:"",HF_STAR:"0"},
-                zhichuDate:new Date().toLocaleDateString().replace(new RegExp("/","g"),"-"),
+                zhichuDate:getFormatDate(),
                 zhichuCount:0,
                 editFlag:false,
             },
             computed:{
                 nowdate:function(){
-                    var reg=new RegExp("/","g");
-                    var date = new Date().toLocaleString().substr(0,10).replace(reg,"-");
-                    console.log(this.zhichuDate);
+                    var date = getFormatDate();
                     if(date==this.zhichuDate){
-                        return "今日消费"
+                        return "今日消费";
                     }else{
                         return this.zhichuDate;
                     }
@@ -358,7 +355,7 @@
                     var date=$("#dtp_input1").val();
                     if(date == ""){
                         var reg=new RegExp("/","g");
-                        date = new Date().toLocaleString().substr(0,10).replace(reg,"-")
+                        date = getFormatDate();
                     }else{
                         date=$("#dtp_input1").val().substr(0,10);
                         this.zhichuDate = date.substr(0,10)
@@ -409,6 +406,7 @@
         }).on('changeDate',function(env){
             $('.form_datetime').datetimepicker('setEndDate',new Date());
             var zhichuDate = $("#dtp_input2").val().substr(0,10);
+            console.log($("#dtp_input2").val())
 //            console.log("haha"+zhichuDate);
             zc.getZhichuList(1,zhichuDate);
         });

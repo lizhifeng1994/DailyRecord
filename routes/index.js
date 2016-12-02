@@ -1,6 +1,5 @@
 'use strict'
 var express = require('express');
-var mongodb = require('mongodb')
 //返回一个路由器实例
 
 var router = express.Router();
@@ -12,11 +11,11 @@ router.get('/', function(req, res){
 	return res.redirect('/home');
 });
 
-router.get('/home',function(req,res){
-	var date = new Date();
-	date = tools.format(date);
-	res.render('home',{title:'我的生活账本',date:date});
-});
+//router.get('/home',function(req,res){
+//	var date = new Date();
+//	date = tools.format(date);
+//	res.render('home',{title:'我的生活账本',date:date});
+//});
 
 router.post('/home/total',home_Manage.show);
 router.post('/home/detail',home_Manage.getDetail);

@@ -70,7 +70,7 @@
                                 </ul>
                             </div>
                         </li>
-                        <li >
+                        <li>
                             <div class="btn-group">
                                 <button type="button"  id="dropdownMenu1"  class="btn btn-default btn-warning" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     整体支出分析 <span class="caret"></span>
@@ -104,19 +104,19 @@
                 <div class="col-sm-6 col-md-4">
                     <div class="caption">
                         <h2>累计支出</h2>
-                        <p><h2 style="color: #ff254a">-{{total.total_ZC}}</h2></p>
+                        <p><h2 style="color: #ff254a">-<%=total_ZC%></h2></p>
                     </div>
                 </div>
                 <div class="col-sm-6 col-md-4">
                     <div class="caption">
                         <h2>累计收入</h2>
-                        <p><h2 style="color: #09b4ff">+{{total.total_SR}}</h2></p>
+                        <p><h2 style="color: #09b4ff">+<%=total_SR%></h2></p>
                     </div>
                 </div>
                 <div class="col-sm-6 col-md-4">
                     <div class="caption">
                         <h2>账目数</h2>
-                        <p><h2>{{total.total_ZM}}</h2></p>
+                        <p><h2><%=total_ZM%></h2></p>
                     </div>
                 </div>
             </div>
@@ -140,14 +140,14 @@
             </div>
             <div class="col-lg-6">
                 <div class="input-group">
-                    <input type="text" class="form-control">
+                    <input type="text" v-model="findConetnt" class="form-control">
                       <span class="input-group-btn">
-                        <button class="btn btn-default" type="button">Find</button>
+                        <button class="btn btn-default" @click="find()" type="button">Find</button>
                       </span>
                 </div><!-- /input-group -->
             </div>
             <div class="col-lg-offset-1 col-lg-2">
-                <button type="button" class="btn btn-default">
+                <button type="button" @click="refresh()" class="btn btn-default">
                     <span class="glyphicon glyphicon-repeat"></span>刷新
                 </button>
             </div>
@@ -179,12 +179,11 @@
                             <a href="/shouru">添加标注收入</a>/<a href="/zhichu">添加标注支出</a>
                         </template>
                         <template v-if="starType==1">
-                            <a href="/shouru">添加标注支出</a>
+                            <a href="/zhichu">添加标注支出</a>
                         </template>
                         <template v-if="starType==2">
                             <a href="/shouru">添加标注收入</a>
                         </template>
-
                     </td>
                 </tr>
                 </tbody>
@@ -218,9 +217,12 @@
             starListFlag:false,
             pageNow:1,
             starType:0,
+//          表示没有找到相关内容
+            NoFindFlag:false,
+            findConetnt:'',
         },
         mounted:function(){
-          this.getTotal(this.pageNow,0);
+          this.getStarList(1,0,this.findConetnt);
         },
         computed:{
             starContentType:function(){
@@ -234,24 +236,43 @@
             }
         },
         methods:{
+            find:function(){
+                this.getStarList(1,this.starType,this.findConetnt);
+            },
+            refresh:function(){
+                this.starType = 0,
+                this.findConetnt = '';
+                this.getStarList(1,0,'');
+            },
+            getTotalNum:function(){
+                this.$http.get('/home/totalNum')
+                        .then(function(response){
+                            console.log(response.data.total);
+                            this.total = response.data.total;
+                        })
+                        .catch(function(response){
+
+                        })
+            },
             getStarSR:function(){
               this.starType=2;
-              this.getTotal(1,this.starType);
+              this.getStarList(1,this.starType,this.findConetnt);
             },
             getStarZC:function(){
                 this.starType=1;
-                this.getTotal(1,this.starType);
+                this.getStarList(1,this.starType,this.findConetnt);
             },
             pageUp:function(){
                 if(this.pageNow>1){
                     this.pageNow -=1;
-                    this.getTotal(this.pageNow,this.starType);
+                    this.getStarList(this.pageNow,this.starType,this.findConetnt);
                 }
             },
             pageDown:function(){
+                console.log(this.starListLength);
                if((this.starList.length==5)&&(this.pageNow*5<this.starListLength)){
                     this.pageNow +=1;
-                    this.getTotal(this.pageNow,this.starType);
+                    this.getStarList(this.pageNow,this.starType,this.findConetnt);
                 }
             },
             cancelStar:function(ID,STAR_TYPE){
@@ -276,21 +297,17 @@
                         })
 
             },
-            getTotal:function(pageNow,STAR_TYPE){
-                this.$http.post('/home/total',{pageNow:pageNow,STAR_TYPE:STAR_TYPE})
+            getStarList:function(pageNow,STAR_TYPE,findConetnt){
+                this.$http.post('/home/starList',{pageNow:pageNow,STAR_TYPE:STAR_TYPE,findConetnt:findConetnt})
                         .then(function (response) {
                             if(response.data.starList.length>0){
-                                this.total = response.data.total;
-//                            console.log(response.data.total);
                                 this.starList = response.data.starList;
-                                this.starListLength =this.total.total_STAR;
+                                this.starListLength =response.data.starCount;
                                 this.starListFlag = true;
-//                                console.log( this.starListLength);
                             }else{
                                 this.starList=[{}];
                                 this.starListFlag = false;
                             }
-//                            console.log(this.starList);
                         })
                         .catch(function (response) {
                             console.log("有错误");

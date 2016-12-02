@@ -12,7 +12,7 @@ router.post('/list',co(function* (req,res){
     var monthDate = req.body.monthDate+"%";
     var pageNow = req.body.pageNow;
     var page = (pageNow-1)*5;
-    var shouruList = yield models.shouru.findAll({
+        var shouruList = yield models.shouru.findAll({
         attributes:['SR_ID','SR_CONTENT','SR_MONEY','SR_FLAG'],
         where: {
             SR_FLAG: "0",

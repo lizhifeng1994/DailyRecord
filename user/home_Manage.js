@@ -10,7 +10,6 @@ module.exports.show= function(req,res){
     //console.log(req.body.pageNow);
     var pageSize = (req.body.pageNow-1)*5;
     var STAR_TYPE=req.body.STAR_TYPE;
-    console.log(STAR_TYPE);
     var sql_type = "";
     if(STAR_TYPE==0){
         sql_type="select ID,STAR_DATE,STAR_CONTENT,STAR_TYPE,STAR_MONEY from table_star ORDER BY STAR_DATE DESC limit "+pageSize+",5";
