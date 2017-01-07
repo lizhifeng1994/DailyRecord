@@ -13,6 +13,8 @@ var routes = require('./routes/index');
 var zhichu = require('./routes/zhichuPath');
 var shouru = require('./routes/shouruPath');
 var home = require('./routes/homePath');
+var user = require('./routes/userPath');
+var zone = require('./routes/zonePath');
 var app = express();
 
 //app.use(cors());
@@ -31,23 +33,23 @@ app.use(cookieParser());
 
 
 app.use(express.static(path.join(__dirname, 'public')));
-//app.use('/vendor',express.static(path.join(__dirname, '/vendor')));
-// app.use('/dist',express.static(path.join(__dirname, '/public/dist')));
-// app.use('/js',express.static(path.join(__dirname, '/public/js')));
-// app.use('vendor',express.static(path.join(__dirname, '/public/vendor')));
+
+app.use(function (req, res, next) {
+  var url = req.originalUrl;//获取浏览器中当前访问的nodejs路由地址；
+  var userCookies=req.cookies.user; //获取客户端存取的cookie,userCookies为cookie的名称；//有时拿不到cookie值，可能是因为拦截器位置放错，获取该cookie的方式是依赖于nodejs自带的cookie模块，//因此，获取cookie必须在1,2步之后才能使用，否则拿到的cookie就是undefined.
+  if (url != "/login" && !userCookies && url!="/user/login") {
+    return res.redirect("/login");
+  }
+  next();
+});
 
 //匹配路径和路由
 app.use('/', routes);
-//app.use('/users', users);
 app.use('/zhichu',zhichu);
 app.use('/shouru',shouru);
 app.use('/home',home);
-//app.use('/users', users);
-//app.use('/home',routes);
-//app.use('/shouru',routes);
-//app.use('/zhichu',routes);
-
-
+app.use('/user',user);
+app.use('/zone',zone);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

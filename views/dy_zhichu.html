@@ -31,6 +31,9 @@
             left:0;
             transition: .3s
         }
+        [v-cloak] {
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -61,16 +64,21 @@
         </div>
         <!--顶部-->
         <div class="col-lg-offset-2  col-lg-8">
-            <nav>
-                <ul class="nav nav-tabs pull-right">
-                    <li >
-                        <a href="/home"><span class="glyphicon glyphicon-tasks"></span>我的生活账本</a>
-                    </li>
-                    <li >
-                        <a id="today_date"><span class="glyphicon glyphicon-time" ></span><%=date%></a>
-                    </li>
-                </ul>
-            </nav>
+            <ul class="nav navbar-nav pull-right">
+                <li><a href="/home"><span class="glyphicon glyphicon-tasks"></span>我的生活账本</a></li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                        欢迎，<%=USER_NAME%>
+                        <b class="caret"></b>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a href="/zone">个人中心</a></li>
+                        <li><a href="#">修改密码</a></li>
+                        <li class="divider"></li>
+                        <li><a href="user/logout">退出</a></li>
+                    </ul>
+                </li>
+            </ul>
             <h3 class="text-muted">DailyRecord--记录点滴生活</h3>
         </div>
 
@@ -100,7 +108,7 @@
                             <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
                             <input class="form-control"  name="hfdate" type="text" value="" data-date="" data-date-format="dd MM yyyy" readonly>
                             <!-- 后台获取数据的-->
-                            <input type="hidden" id="dtp_input1" value="" />
+                            <input type="hidden" name="hfdate" id="dtp_input1" value="" />
                         </div>
                     </div>
                 </div>
@@ -165,15 +173,15 @@
         <div class="col-lg-offset-0  col-lg-3">
             <div class="panel panel-primary">
                 <div class="panel-heading">
-                    <span style="margin-left: 10px;" id="show_hf_date"  data-date-format="yyyy-mm-dd" data-link-field="dtp_input2" class="input-append date form_datetime1">{{nowdate}}</span>
-                    <strong class="pull-right" id="total_money">总计：{{todayMoney}}元</strong>
+                    <span style="margin-left: 10px;" id="show_hf_date" v-cloak  data-date-format="yyyy-mm-dd" data-link-field="dtp_input2" class="input-append date form_datetime1">{{nowdate}}</span>
+                    <strong class="pull-right" id="total_money" v-cloak>总计：{{todayMoney}}元</strong>
                     <input type="hidden" id="dtp_input2" value="" readonly>
                 </div>
                 <div class="panel-body list-group" id="today_hf">
 
                     <!-- 列出今日消费的内容-->
                     <template v-if="showList">
-                        <li class="list-group-item" :data-id="index" @mouseover="eListOver($event)" @mouseleave="eListOut($event)"  v-for="(item,index) in zhichuList"  style="overflow:hidden;">
+                        <li class="list-group-item" v-cloak :data-id="index" @mouseover="eListOver($event)" @mouseleave="eListOut($event)"  v-for="(item,index) in zhichuList"  style="overflow:hidden;">
                             <b>{{item.HF_CONTENT}}</b>
                             <span class="label label-danger pull-right">-{{item.HF_MONEY}}元</span>
                             <div :class="[parseInt(item.HF_FLAG)? 'dask_listHV':'dask']">
@@ -266,6 +274,10 @@
                                     this.pageNow -=1;
                                 }
                                 this.getZhichuList(this.pageNow,this.zhichuDate);
+                                console.log(HF_ID+"--"+this.zhichu.HF_ID);
+                                if(HF_ID==this.zhichu.HF_ID){
+                                    this.editFlag = false;
+                                }
                                 $('#myModal').modal('hide');
                             })
                             .catch(function(response){
@@ -301,10 +313,11 @@
                     if ($('#zhichuForm').data('bootstrapValidator').isValid()) {
                         this.zhichu.HF_STAR = (this.zhichu.HF_STAR!=0)?'1':'0';
                         this.zhichu.HF_DATE = this.getDate();
+                        var date = this.zhichu.HF_DATE;
                         this.$http.post("/zhichu/add",{zhichu:this.zhichu})
                                 .then(function(response){
                                     this.clean();
-                                    this.getZhichuList(1,this.zhichuDate);
+                                    this.getZhichuList(1,date);
                                 })
                                 .catch(function(response){
                                     console.log("有错误")

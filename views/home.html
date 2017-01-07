@@ -35,18 +35,31 @@
 
     <!-- 顶部-->
     <div class="col-lg-offset-2  col-lg-8">
-        <nav>
-            <ul class="nav nav-tabs pull-right">
-                <li >
-                    <a href="/"><span class="glyphicon glyphicon-tasks"></span>我的生活账本</a>
-                </li>
-                <li >
-                     <a href="#"><span class="glyphicon glyphicon-time" ></span><%=date%></a>
-                 </li>
-            </ul>
-        </nav>
+        <ul class="nav navbar-nav pull-right">
+            <li><a href="/home"><span class="glyphicon glyphicon-tasks"></span>我的生活账本</a></li>
+            <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                    欢迎，<%=USER_NAME%>
+                    <b class="caret"></b>
+                </a>
+                <ul class="dropdown-menu">
+                    <li><a href="/zone">个人中心</a></li>
+                    <li class="divider"></li>
+                    <li><a href="/user/logout">退出</a></li>
+                </ul>
+            </li>
+        </ul>
+        <!--<nav>-->
+            <!--<ul class="nav nav-tabs pull-right">-->
+                <!--<li >-->
+                    <!--<a href="/home"><span class="glyphicon glyphicon-tasks"></span>我的生活账本</a>-->
+                <!--</li>-->
+                <!--<li >-->
+                     <!--<a href="#"><span class="glyphicon glyphicon-time" ></span><%=date%></a>-->
+                 <!--</li>-->
+            <!--</ul>-->
+        <!--</nav>-->
         <h3 class="text-muted">DailyRecord--记录点滴生活</h3>
-
     </div>
 
     <!-- 支出收入分析 -->
@@ -56,38 +69,38 @@
             <div class="panel-heading">
                 <nav>
                     <ul class="nav nav-tabs pull-right">
-                        <li>
-                            <!-- Single button -->
-                            <div class="btn-group">
-                                <button  type="button" id="dropdownMenu2" class="btn btn-default btn-success" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    整体收入分析
-                                    <span class="caret"></span>
-                                </button>
-                                <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
-                                    <li><a href="#">月分析</a></li>
-                                    <li><a href="#">季度分析</a></li>
-                                    <li><a href="#">年度分析</a></li>
-                                </ul>
-                            </div>
-                        </li>
-                        <li>
-                            <div class="btn-group">
-                                <button type="button"  id="dropdownMenu1"  class="btn btn-default btn-warning" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    整体支出分析 <span class="caret"></span>
-                                </button>
-                                <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                                    <li><a href="/zhichu/analysis">月分析</a></li>
-                                    <li><a href="/zhichu/analysis">季度分析</a></li>
-                                    <li><a href="/zhichu/analysis">年度分析</a></li>
-                                </ul>
-                            </div>
-                        </li>
+                        <!--<li>-->
+                            <!--&lt;!&ndash; Single button &ndash;&gt;-->
+                            <!--<div class="btn-group">-->
+                                <!--<button  type="button" id="dropdownMenu2" class="btn btn-default btn-success" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">-->
+                                    <!--整体收入分析-->
+                                    <!--<span class="caret"></span>-->
+                                <!--</button>-->
+                                <!--<ul class="dropdown-menu" aria-labelledby="dropdownMenu2">-->
+                                    <!--<li><a href="#">月分析</a></li>-->
+                                    <!--<li><a href="#">季度分析</a></li>-->
+                                    <!--<li><a href="#">年度分析</a></li>-->
+                                <!--</ul>-->
+                            <!--</div>-->
+                        <!--</li>-->
+                        <!--<li>-->
+                            <!--<div class="btn-group">-->
+                                <!--<button type="button"  id="dropdownMenu1"  class="btn btn-default btn-warning" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">-->
+                                    <!--整体支出分析 <span class="caret"></span>-->
+                                <!--</button>-->
+                                <!--<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">-->
+                                    <!--<li><a href="/zhichu/analysis">月分析</a></li>-->
+                                    <!--<li><a href="/zhichu/analysis">季度分析</a></li>-->
+                                    <!--<li><a href="/zhichu/analysis">年度分析</a></li>-->
+                                <!--</ul>-->
+                            <!--</div>-->
+                        <!--</li>-->
                         <li>
                             <div class="btn-group" role="group" style="margin-left: 10px;">
-                                <button type="button" class="btn btn-default" onclick="javascript:window.location.href='/shouru';">
+                                <button type="button" class="btn btn-default btn-success" onclick="javascript:window.location.href='/shouru';">
                                     <span class="glyphicon glyphicon-plus" style="margin-right: 10px;"></span>收入
                                 </button>
-                                <button type="button" class="btn btn-default" onclick="javascript:window.location.href='/zhichu';">
+                                <button type="button" class="btn btn-default btn-danger" onclick="javascript:window.location.href='/zhichu';">
                                     <span class="glyphicon glyphicon-minus" style="margin-right: 10px;"></span>支出
                                 </button>
                             </div>
@@ -162,7 +175,7 @@
                 <td><strong>类别</strong></td>
                 <td><strong>金额</strong></td>
                 <td><strong>操作</strong></td>
-                <tr v-if="starListFlag" v-for="item in starList">
+                <tr v-if="starListFlag"  v-for="item in starList" >
                     <td>{{item.STAR_DATE}}</td>
                     <td>{{item.STAR_CONTENT}}</td>
                     <td>{{item.STAR_TYPE==1?'支出':'收入'}}</td>
@@ -279,7 +292,7 @@
                 this.$http.post('/home/cancelStar',{ID:ID,STAR_TYPE:STAR_TYPE})
                     .then(function(response){
                             $('#myModal').modal('hide');
-                            this.getTotal(1,this.starType);
+                            this.getStarList(this.pageNow,this.starType,this.findConetnt);
                         })
                     .catch(function(response){
                             console.log("有错误");

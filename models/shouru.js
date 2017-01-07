@@ -15,11 +15,23 @@ module.exports = function(sequelize,DataTypes){
         SR_MONEY: DataTypes.STRING,
         SR_MARK: DataTypes.STRING,
         SR_STAR: DataTypes.STRING,
-        SR_FLAG: DataTypes.STRING
+        SR_FLAG: DataTypes.STRING,
+        USER_ID: DataTypes.INTEGER
     },{
         timestamps: false,
         tableName: 'table_sr',
         underscored: false
+    },{
+        classMethods: {
+            associate: function(models) {
+                shouru.belongsTo(models.user, {
+                    onDelete: "CASCADE",
+                    foreignKey: {
+                        allowNull: false
+                    }
+                });
+            }
+        }
     });
     return Shouru;
 };

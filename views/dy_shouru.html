@@ -31,6 +31,9 @@
             left:0;
             transition: .3s
         }
+        [v-cloak] {
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -60,16 +63,21 @@
     </div>
     <!--顶部-->
     <div class="col-lg-offset-2  col-lg-8">
-        <nav>
-            <ul class="nav nav-tabs pull-right">
-                <li >
-                    <a href="/home"><span class="glyphicon glyphicon-tasks"></span>我的生活账本</a>
-                </li>
-                <li>
-                    <a><span class="glyphicon glyphicon-time" ></span><%=date%></a>
-                </li>
-            </ul>
-        </nav>
+        <ul class="nav navbar-nav pull-right">
+            <li><a href="/home"><span class="glyphicon glyphicon-tasks"></span>我的生活账本</a></li>
+            <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                    欢迎，<%=USER_NAME%>
+                    <b class="caret"></b>
+                </a>
+                <ul class="dropdown-menu">
+                    <li><a href="/zone">个人中心</a></li>
+                    <li><a href="#">修改密码</a></li>
+                    <li class="divider"></li>
+                    <li><a href="user/logout">退出</a></li>
+                </ul>
+            </li>
+        </ul>
         <h3 class="text-muted">DailyRecord--记录点滴生活</h3>
     </div>
 
@@ -99,7 +107,7 @@
                         <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
                         <input class="form-control" name="srdate" type="text" value="" data-date="" data-date-format="dd MM yyyy" readonly>
                         <!-- 后台获取数据的-->
-                        <input type="hidden"  id="dtp_input1" value="" />
+                        <input type="hidden" name="srdate"  id="dtp_input1" value="" />
                     </div>
                 </div>
             </div>
@@ -112,7 +120,7 @@
                         <option value="1">工资</option>
                         <option value="2">补贴</option>
                         <option value="3">项目奖金</option>
-                        <option value="6">其他</option>
+                        <option value="4">其他</option>
                     </select>
                 </div>
             </div>
@@ -162,13 +170,13 @@
     <div class="col-lg-offset-0  col-lg-3">
         <div class="panel panel-primary">
             <div class="panel-heading">
-                <span style="margin-left: 10px;" id="show_hf_date"  data-link-field="dtp_input2" class="input-append date form_datetime1">{{nowmonth}}</span>
+                <span style="margin-left: 10px;" id="show_hf_date" v-cloak  data-link-field="dtp_input2" class="input-append date form_datetime1">{{nowmonth}}</span>
                 <input type="hidden" id="dtp_input2" value="" readonly>
-                <strong class="pull-right" id="total_money">总计：{{totalMoney}}元</strong>
+                <strong class="pull-right" id="total_money"  v-cloak>总计：{{totalMoney}}元</strong>
             </div>
             <div class="panel-body list-group">
                     <template v-if="showList">
-                        <li class="list-group-item" :data-id="index"  @mouseover="eListOver($event)" @mouseleave="eListOut($event)"  v-for="(item,index) in list"   style="overflow:hidden;" >
+                        <li class="list-group-item"  v-cloak :data-id="index"  @mouseover="eListOver($event)" @mouseleave="eListOut($event)"  v-for="(item,index) in list"   style="overflow:hidden;" >
                             <b>{{item.SR_CONTENT}}</b>
                             <span class="label label-danger pull-right">+{{item.SR_MONEY}}元</span>
                             <div  :class="[parseInt(item.SR_FLAG)? 'dask_listHV':'dask']">
@@ -196,6 +204,7 @@
 <script type="text/javascript" src="../dist/js/bootstrapValidator.js"></script>
 <script src="../js/bootstrap-datetimepicker.min.js" type="text/javascript"></script>
 <script src="../js/vue.js" type="text/javascript"></script>
+<script type="text/javascript" src="../js/comm.js"></script>
 <script src="../js/vue-resource.min.js" type="text/javascript"></script>
 <script type="text/javascript">
 //    //        鼠标悬停触发事件
@@ -205,7 +214,7 @@
             list:[{}],
             srDetail:"",
             shouru:{SR_KIND:"",SR_STAR:"0"},
-            monthDate:new Date().getFullYear()+"-"+(new Date().getMonth()+1),
+            monthDate:getFormatDate().substring(0,7),
             pageNow:1,
             totalMoney:parseFloat(0).toFixed(2),
             showList:false,
@@ -266,6 +275,9 @@
                         }else{
                             this.getList(this.monthDate,this.pageNow);
                         }
+                            if(SR_ID==this.shouru.SR_ID){
+                                this.editFlag = false;
+                            }
                         $('#myModal').modal('hide');
                     })
                     .catch(function(response){
@@ -351,13 +363,15 @@
             },
             getDate:function(){
                 var date=$("#dtp_input1").val();
+                console.log(date);
                 if(date == ""){
                     var reg=new RegExp("/","g");
                     date = new Date().toLocaleString().substr(0,10).replace(reg,"-")
                 }else{
-                    date=$("#dtp_input1").val().substr(0,10);
+                    date=date.substr(0,10);
                     this.monthDate = date.substr(0,7)
                 }
+//                console.log(date);
                 return date;
             },
         }
@@ -440,7 +454,12 @@
                     validators: {}
                 },
                 srmark:{
-                    validators: {}
+                    validators: {
+                        stringLength: {
+                            max: 250,
+                            message: '请输入少于250个字'
+                        }
+                    }
                 },
                 srstar:{
                     validators: {}

@@ -18,7 +18,8 @@ router.post('/list',co(function* (req,res){
             SR_FLAG: "0",
             SR_DATE: {
                 $like:monthDate
-            }
+            },
+            USER_ID: req.cookies.user.USER_ID,
         },
         order: 'SR_ID DESC',
         limit: 5,
@@ -30,7 +31,8 @@ router.post('/list',co(function* (req,res){
             SR_FLAG:"0",
             SR_DATE: {
                 $like:monthDate
-            }
+            },
+            USER_ID: req.cookies.user.USER_ID,
         }
     });
 
@@ -45,7 +47,8 @@ router.post('/list',co(function* (req,res){
             SR_FLAG:"0",
             SR_DATE: {
                 $like:monthDate
-            }
+            },
+            USER_ID: req.cookies.user.USER_ID,
         }
     });
 
@@ -64,6 +67,7 @@ router.post('/add',co(function* (req,res){
         SR_STAR:req.body.shouru.SR_STAR,
         SR_MONEY:req.body.shouru.SR_MONEY,
         SR_MARK:req.body.shouru.SR_MARK,
+        USER_ID: req.cookies.user.USER_ID
     });
     //console.log(addFlag);
     res.send(addFlag);
@@ -72,7 +76,8 @@ router.post('/add',co(function* (req,res){
 router.post('/detail',co(function* (req,res){
     var shouru = yield models.shouru.findOne({
         where:{
-            SR_ID:req.body.SR_ID
+            SR_ID:req.body.SR_ID,
+            USER_ID: req.cookies.user.USER_ID,
         }
     });
 
@@ -84,7 +89,8 @@ router.post('/del',co(function* (req,res){
         {
             where:
             {
-                SR_ID: req.body.SR_ID
+                SR_ID: req.body.SR_ID,
+                USER_ID: req.cookies.user.USER_ID
             }
         });
     res.send(flag)
@@ -105,7 +111,8 @@ router.post('/edit',co(function* (req,res){
         {
             where:
             {
-                SR_ID: req.body.shouru.SR_ID
+                SR_ID: req.body.shouru.SR_ID,
+                USER_ID: req.cookies.user.USER_ID
             }
         });
     res.send(flag);

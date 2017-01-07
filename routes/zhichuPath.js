@@ -7,13 +7,12 @@ var co = require('co-express');
 router.post('/list',co(function* (req,res){
     var zhichuDate = req.body.zhichuDate;
     var pageNow = req.body.pageNow;
-    console.log(req.body.pageNow);
-    console.log(zhichuDate)
     var zhichuList = yield models.zhichu.findAll({
         attributes:['HF_ID','HF_CONTENT','HF_MONEY','HF_FLAG'],
         where: {
             HF_FLAG: "0",
-            HF_DATE: zhichuDate
+            HF_DATE: zhichuDate,
+            USER_ID: req.cookies.user.USER_ID,
         },
         order: 'HF_ID DESC',
         limit: 5,
@@ -24,6 +23,7 @@ router.post('/list',co(function* (req,res){
         where:{
             HF_FLAG:"0",
             HF_DATE:zhichuDate,
+            USER_ID: req.cookies.user.USER_ID,
         }
     });
     if(zhichuMoney==null){
@@ -36,6 +36,7 @@ router.post('/list',co(function* (req,res){
         where:{
             HF_FLAG:"0",
             HF_DATE:zhichuDate,
+            USER_ID: req.cookies.user.USER_ID
         }
     });
 
@@ -52,6 +53,7 @@ router.post('/add',co(function* (req,res){
         HF_STAR:req.body.zhichu.HF_STAR,
         HF_MONEY:req.body.zhichu.HF_MONEY,
         HF_MARK:req.body.zhichu.HF_MARK,
+        USER_ID: req.cookies.user.USER_ID
     })
     //console.log(addFlag);
     res.send(addFlag);
