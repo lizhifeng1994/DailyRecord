@@ -55,11 +55,13 @@ BootSTrap风格的日期选择插件
 
 对收入和支出表写了update和insert触发器，用来对table_star表进行操作
 
-## 项目心得
+**sequelize**
 
-- 不同的项目需求选择不同的框架，像我这个记账的，轻量级，就不要用SSM这种框架来写了
-- 不精通前端，还是老老实实用BootStrap来写
-- 多用Google和[stackoverflow](http://stackoverflow.com/)来查找问题，事半功倍
+[GitHub地址](https://github.com/sequelize/sequelize)
+
+只用到了一些基本功能，比起手写sql语句不知道高到哪里去了，只有英文文档，也还好
+
+钩子，事物等一些高级功能没有用到
 
 
 ## 完成进度
@@ -71,3 +73,5 @@ BootSTrap风格的日期选择插件
 2016/11/21：收入VUE+VUE_RESOUCE写的CRUD，非常方便
 
 2016/11/24：完成我的首页功能模块
+
+2016/12/02：将以前的手写sql转成ORM框架 首页新增标注列表查询
